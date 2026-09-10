@@ -1,0 +1,21 @@
+{
+  "name": "attendx",
+  "version": "1.0.0",
+  "description": "AttendX - Photo-Verified, Geofenced Employee Attendance Tracking System (PWA)",
+  "private": true,
+  "type": "commonjs",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "reseed": "node server/db.js --reseed",
+    "icons": "node scripts/gen-icons.js",
+    "test": "node scripts/smoke-test.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "multer": "^2.0.1"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  }
+}
