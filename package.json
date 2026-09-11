@@ -7,7 +7,7 @@
     "start": "node backend/server.js",
     "dev": "node backend/server.js",
     "icons": "node gen-icons.js",
-    "reseed": "node -e \"const fs=require('fs');const p=require('path');try{fs.rmSync(p.join(__dirname,'data'),{recursive:true,force:true});console.log('Data cleared')}catch(e){console.log(e.message)}\""
+    "reseed": "node -e \"const fs=require('fs');const p=require('path');try{['attendx.db','attendx.db-shm','attendx.db-wal'].forEach(f=>fs.rmSync(p.join(__dirname,'database',f),{force:true}));console.log('Database cleared')}catch(e){console.log(e.message)}\""
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

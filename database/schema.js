@@ -5,7 +5,7 @@ const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 
-const DATA_DIR = path.join(__dirname, '..', 'data');
+const DATA_DIR = __dirname;
 fs.mkdirSync(path.join(DATA_DIR, 'uploads'), { recursive: true });
 
 const db = new DatabaseSync(path.join(DATA_DIR, 'attendx.db'));
@@ -113,6 +113,48 @@ function initSchema() {
 
   const count = prepare('SELECT COUNT(*) as c FROM sections').get();
   if (count && count.c === 0) seed();
+  ensureSixShifts();
+}
+
+function ensureSixShifts() {
+  const standardShifts = [
+    { name: 'Morning Alpha', start: '06:00', end: '14:00', grace: 10 },
+    { name: 'Day Bravo', start: '09:00', end: '17:00', grace: 15 },
+    { name: 'Afternoon Charlie', start: '13:00', end: '21:00', grace: 10 },
+    { name: 'Evening Delta', start: '16:00', end: '00:00', grace: 10 },
+    { name: 'Twilight Echo', start: '20:00', end: '04:00', grace: 15 },
+    { name: 'Night Foxtrot', start: '00:00', end: '08:00', grace: 10 }
+  ];
+
+  const cpNames = [
+    'Sign In',
+    'Lunch Break Out',
+    'Lunch Break In',
+    'Tea Break Out',
+    'Tea Break In',
+    'Sign Out',
+    'Custom Checkpoint 1',
+    'Custom Checkpoint 2'
+  ];
+
+  const insShift = prepare('INSERT INTO shifts (id,name,start_time,end_time,grace_minutes) VALUES (?,?,?,?,?)');
+  const insCp = prepare('INSERT INTO checkpoints (id,shift_id,name,sequence_order,is_custom) VALUES (?,?,?,?,?)');
+
+  standardShifts.forEach(s => {
+    let existing = prepare('SELECT id FROM shifts WHERE LOWER(name)=LOWER(?)').get(s.name);
+    let shiftId = existing ? existing.id : null;
+    if (!shiftId) {
+      shiftId = uuid();
+      insShift.run(shiftId, s.name, s.start, s.end, s.grace);
+    }
+
+    const cpCount = prepare('SELECT COUNT(*) as c FROM checkpoints WHERE shift_id=?').get(shiftId).c;
+    if (cpCount === 0) {
+      cpNames.forEach((name, idx) => {
+        insCp.run(uuid(), shiftId, name, idx + 1, idx >= 6 ? 1 : 0);
+      });
+    }
+  });
 }
 
 function seed() {

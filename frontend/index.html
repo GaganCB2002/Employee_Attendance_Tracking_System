@@ -6,14 +6,14 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#060a12">
+  <meta name="theme-color" content="#0b0d13">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>AttendX Aero-Ops Telemetry</title>
+  <title>AttendX — Enterprise Workforce Attendance & Geofencing</title>
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" href="/icons/icon-192.png">
   <link rel="apple-touch-icon" href="/icons/icon-192.png">
-  <link rel="stylesheet" href="/css/main.css?v=3">
+  <link rel="stylesheet" href="/css/main.css?v=5">
 </head>
 <body>
 
@@ -21,18 +21,38 @@
 <div id="screen-login" class="screen active">
   <div class="login-bg">
     <div class="login-card">
+      <div class="brand-badge">
+        <span class="brand-badge-dot"></span>
+        TITANIUM ACCENT &bull; #8B8589
+      </div>
       <div class="login-logo">AX</div>
-      <h1>AERO-OPS <span>TELEMETRY</span></h1>
-      <p>ATTENDANCE COMMAND CENTER</p>
-      <form id="form-login" autocomplete="off">
-        <label>IDENTIFICATION CODE</label>
-        <input type="text" id="inp-id" placeholder="SUPER-001" required autofocus>
-        <label>ACCESS KEY</label>
-        <input type="password" id="inp-pw" placeholder="Enter credentials" required>
+      <h1>Sign in to AttendX</h1>
+      <p class="login-subtitle">Workforce Attendance & Geofence Verification</p>
+
+      <form id="form-login" autocomplete="off" action="javascript:void(0);" onsubmit="App.onLogin(event);">
+        <div class="form-group">
+          <label for="inp-id">EMPLOYEE ID OR ADMIN USERNAME</label>
+          <input type="text" id="inp-id" placeholder="SUPER-001, SA-ENG-01 or EMP-09411" required autofocus>
+        </div>
+        <div class="form-group">
+          <label for="inp-pw">PASSWORD</label>
+          <input type="password" id="inp-pw" placeholder="Enter password" required>
+        </div>
         <div id="login-error" class="login-error"></div>
-        <button type="submit" class="btn-auth">AUTHENTICATE</button>
+        <button type="submit" class="btn-primary">Sign In to Dashboard</button>
       </form>
-      <div class="login-hint">SUPER-001 / admin123 &nbsp;|&nbsp; SA-ENG-01 / section123 &nbsp;|&nbsp; EMP-09411 / emp123</div>
+
+      <div class="quick-login-section">
+        <span class="quick-login-label">One-Click Demo Access</span>
+        <div class="quick-login-grid">
+          <button type="button" class="btn-demo-chip" onclick="App.quickLogin('SUPER-001','admin123')">⚡ Super Admin</button>
+          <button type="button" class="btn-demo-chip" onclick="App.quickLogin('SA-ENG-01','section123')">🏢 Section Admin</button>
+          <button type="button" class="btn-demo-chip" onclick="App.quickLogin('EMP-09411','emp123')">👤 Employee</button>
+        </div>
+      </div>
+      <div class="login-footer-hint">
+        SUPER-001 (Super Admin) &bull; SA-ENG-01 (Engineering) &bull; EMP-09411 (Personnel)
+      </div>
     </div>
   </div>
 </div>
@@ -42,234 +62,377 @@
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="sb-logo" title="AttendX">AX</div>
-    <nav class="sb-nav">
-      <button class="sb-item active" data-view="dashboard" title="Live Monitor">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    <div class="sidebar-brand" onclick="App.navigate('dashboard')" title="AttendX Home">AX</div>
+    <nav class="sidebar-nav">
+      <button class="sidebar-btn" data-view="employee" id="sb-nav-employee" title="My Checkpoints">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
       </button>
-      <button class="sb-item" data-view="employees" title="Personnel">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <button class="sidebar-btn active" data-view="dashboard" id="sb-nav-dashboard" title="Live Attendance Monitor">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       </button>
-      <button class="sb-item" data-view="geofence" title="Geofencing">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+      <button class="sidebar-btn" data-view="folders" id="sb-nav-folders" title="Folder Hierarchy">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
       </button>
-      <button class="sb-item" data-view="shifts" title="Shifts">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <button class="sidebar-btn" data-view="employees" id="sb-nav-employees" title="Employees Directory">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       </button>
-      <button class="sb-item" data-view="sections" title="Sections">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+      <button class="sidebar-btn" data-view="geofence" id="sb-nav-geofence" title="Geofence Zones">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+      <button class="sidebar-btn" data-view="shifts" id="sb-nav-shifts" title="Shifts & Checkpoints">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </button>
+      <button class="sidebar-btn" data-view="sections" id="sb-nav-sections" title="Departments">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 21h18M3 7v14M21 7v14M7 3h10v18H7z"/></svg>
       </button>
     </nav>
-    <div class="sb-bottom">
-      <button class="sb-item" data-view="audit" title="Audit Trail">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    <div class="sidebar-footer">
+      <button class="sidebar-btn" data-view="audit" id="sb-nav-audit" title="Audit Trail">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
       </button>
-      <button class="sb-item" data-view="settings" title="Settings">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      <button class="sidebar-btn" data-view="settings" id="sb-nav-settings" title="System Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
       </button>
     </div>
   </aside>
 
-  <!-- TOP BAR -->
-  <header class="topbar">
-    <div class="tb-left">
-      <span class="tb-brand">AERO-OPS <small>TELEMETRY</small></span>
-      <span class="tb-separator">|</span>
-      <span class="tb-subtitle" id="tb-section-name">VANGUARD SEC-04 COMMAND</span>
-    </div>
-    <nav class="tb-tabs">
-      <button class="tb-tab active" onclick="App.navigate('dashboard')">Live Monitor</button>
-      <button class="tb-tab" onclick="App.navigate('geofence')">Geofencing</button>
-      <button class="tb-tab" onclick="App.navigate('shifts')">Shift Engine</button>
-      <button class="tb-tab" onclick="App.navigate('audit')">Audit Trail</button>
-    </nav>
-    <div class="tb-right">
-      <span class="tb-indicator"><span class="pulse"></span> WS CONNECTED</span>
-      <span class="tb-clock" id="zulu-clock">00:00:00Z</span>
-      <span class="tb-role-badge" id="tb-role">SUPER ADMIN</span>
-      <button class="btn-emergency" onclick="App.toast('Emergency override activated','error')">Emergency Override</button>
-      <button class="btn-power" onclick="App.logout()" title="Logout">⏻</button>
-    </div>
-  </header>
+  <!-- APP CONTENT WRAPPER -->
+  <div class="app-main">
 
-  <!-- MAIN CONTENT -->
-  <main class="content">
-
-    <!-- ===== DASHBOARD ===== -->
-    <section id="view-dashboard" class="view active">
-
-      <!-- STATS -->
-      <div class="stats-grid">
-        <div class="stat-card stat-cyan">
-          <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
-          <div class="stat-data">
-            <span class="stat-label">TOTAL WORKFORCE</span>
-            <span class="stat-value" id="stat-total">--</span>
-            <span class="stat-desc">Active Sector Registered</span>
-          </div>
-        </div>
-        <div class="stat-card stat-green">
-          <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
-          <div class="stat-data">
-            <span class="stat-label">ON-SITE VERIFIED</span>
-            <span class="stat-value" id="stat-present">--</span>
-            <span class="stat-desc">Inside Geofence Ring</span>
-          </div>
-        </div>
-        <div class="stat-card stat-red">
-          <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-          <div class="stat-data">
-            <span class="stat-label">LATE FLAGGED</span>
-            <span class="stat-value" id="stat-late">--</span>
-            <span class="stat-desc">Threshold Breached</span>
-          </div>
-        </div>
-        <div class="stat-card stat-amber">
-          <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg></div>
-          <div class="stat-data">
-            <span class="stat-label">BREAK / LUNCH</span>
-            <span class="stat-value" id="stat-breaks">--</span>
-            <span class="stat-desc">Active Breaks</span>
-          </div>
-        </div>
-        <div class="stat-card stat-red">
-          <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
-          <div class="stat-data">
-            <span class="stat-label">GEOFENCE BREACH</span>
-            <span class="stat-value" id="stat-breaches">--</span>
-            <span class="stat-desc">Outside Perimeter</span>
-          </div>
-        </div>
-        <div class="stat-card stat-amber">
-          <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-          <div class="stat-data">
-            <span class="stat-label">AUTH LOCKOUTS</span>
-            <span class="stat-value" id="stat-lockouts">--</span>
-            <span class="stat-desc">Failed Credentials</span>
-          </div>
-        </div>
+    <!-- TOP NAVBAR -->
+    <header class="navbar">
+      <div class="nav-left">
+        <span class="app-title">AttendX <span class="app-title-badge">Enterprise</span></span>
+        <span class="nav-divider"></span>
+        <span class="nav-context-label" id="tb-section-name">Main Campus &bull; All Sectors</span>
       </div>
-
-      <!-- LIVE EVENT + RADAR -->
-      <div class="two-col">
-        <!-- LIVE EVENT -->
-        <div class="panel panel-live">
-          <div class="panel-bar">
-            <span class="tag-cyan">LIVE EVENT PHOTO FLASH</span>
-            <span class="panel-right">TELEMETRY ID: <span id="evt-id">---</span></span>
-            <span class="panel-right">Live Display Lock: <span id="lock-countdown">03:00</span></span>
-          </div>
-          <div class="panel-body" id="live-event">
-            <div class="empty-state">Awaiting telemetry signal...</div>
-          </div>
-        </div>
-
-        <!-- RADAR -->
-        <div class="panel panel-radar">
-          <div class="panel-bar">
-            <span class="tag-cyan">GPS GEOFENCE VECTOR RADAR</span>
-            <span class="tag-green">RING: <span id="geo-radius">50</span>m RADIUS</span>
-          </div>
-          <div class="radar-wrap">
-            <canvas id="radar-canvas" width="380" height="380"></canvas>
-          </div>
-          <div class="radar-info">
-            <div><span class="ri-label">PERIMETER LOCK</span><span class="ri-val green" id="ri-inside">-- INSIDE</span></div>
-            <div><span class="ri-label">SIGNAL ACCURACY</span><span class="ri-val">±1.2m LATERAL</span></div>
-            <div><span class="ri-label">BREACH EVENT</span><span class="ri-val red" id="ri-outside">-- OUTSIDE</span></div>
-          </div>
-        </div>
+      <nav class="nav-tabs">
+        <button class="nav-tab" id="tb-tab-employee" onclick="App.navigate('employee')" style="display:none">My Checkpoints</button>
+        <button class="nav-tab active" id="tb-tab-dashboard" onclick="App.navigate('dashboard')">Live Monitor</button>
+        <button class="nav-tab" id="tb-tab-folders" onclick="App.navigate('folders')">Folder View</button>
+        <button class="nav-tab" id="tb-tab-employees" onclick="App.navigate('employees')">Employees</button>
+        <button class="nav-tab" id="tb-tab-geofence" onclick="App.navigate('geofence')">Geofences</button>
+        <button class="nav-tab" id="tb-tab-shifts" onclick="App.navigate('shifts')">Shift Engine</button>
+        <button class="nav-tab" id="tb-tab-sections" onclick="App.navigate('sections')">Departments</button>
+        <button class="nav-tab" id="tb-tab-audit" onclick="App.navigate('audit')">Audit Trail</button>
+        <button class="nav-tab" id="tb-tab-settings" onclick="App.navigate('settings')">Settings</button>
+      </nav>
+      <div class="nav-right">
+        <button class="btn-secondary" onclick="App.exportCsv()" title="Export Attendance Records as CSV">⬇ Export CSV</button>
+        <span class="nav-status-pill"><span class="status-dot-pulse"></span> Online</span>
+        <span class="nav-clock" id="zulu-clock">00:00:00Z</span>
+        <span class="role-badge" id="tb-role">SUPER ADMIN</span>
+        <button class="btn-icon" onclick="App.logout()" title="Logout">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
       </div>
+    </header>
 
-      <!-- STREAM + LOCKOUTS -->
-      <div class="two-col two-col-wide">
-        <!-- STREAM -->
-        <div class="panel panel-stream">
-          <div class="panel-bar">
-            <span class="tag-cyan">ATTENDANCE EVENT STREAM & ROSTER</span>
-            <div class="filter-group">
-              <button class="filter-btn active" onclick="App.filterStream('all',this)">ALL FLOWS</button>
-              <button class="filter-btn" onclick="App.filterStream('LATE',this)">LATE</button>
-              <button class="filter-btn" onclick="App.filterStream('ON_TIME',this)">ON-TIME</button>
-              <button class="filter-btn" onclick="App.filterStream('REJECTED',this)">BREACH</button>
+    <!-- MAIN CONTENT VIEWPORT -->
+    <main class="content">
+
+      <!-- ===== EMPLOYEE CHECKPOINT PORTAL ===== -->
+      <section id="view-employee" class="view">
+        <div class="emp-portal-grid">
+          <!-- Profile Card -->
+          <div class="panel emp-profile-panel">
+            <div class="emp-profile-head">
+              <div class="emp-avatar-box">
+                <img id="emp-avatar" src="" alt="" onerror="this.style.display='none'">
+                <span class="emp-avatar-placeholder" id="emp-avatar-initials">AX</span>
+              </div>
+              <div class="emp-meta-box">
+                <div class="emp-meta-name" id="emp-name">Loading Employee Profile...</div>
+                <div class="emp-meta-sub">
+                  <span class="badge badge-id" id="emp-code">--</span>
+                  <span class="badge badge-taupe" id="emp-section">Engineering</span>
+                  <span class="badge badge-ok" id="emp-shift">Morning Alpha</span>
+                  <span class="badge" id="emp-consent-badge">Consent Recorded</span>
+                </div>
+              </div>
+              <div class="emp-shift-telemetry">
+                <div><span class="meta-label">Assigned Shift</span><span class="meta-val" id="emp-shift-time">06:00 &ndash; 14:00</span></div>
+                <div><span class="meta-label">Late Grace Buffer</span><span class="meta-val" id="emp-shift-grace">10 min</span></div>
+              </div>
             </div>
           </div>
-          <div class="stream-body" id="stream-body">
-            <div class="empty-state">Loading event stream...</div>
+
+          <!-- Consent Notice (Shown until accepted) -->
+          <div class="panel panel-consent hidden" id="card-consent">
+            <div class="panel-header">
+              <span class="badge badge-late">Mandatory Onboarding Consent Required</span>
+            </div>
+            <div class="panel-body">
+              <p style="color:var(--txt-primary);margin-bottom:8px">AttendX validates your presence using <b>device photo verification</b> and <b>office GPS geofence validation</b> at each scheduled checkpoint.</p>
+              <p style="color:var(--txt-muted);font-size:12px;margin-bottom:14px">Data is securely encrypted and retained for 180 days per organization compliance policy.</p>
+              <button class="btn-primary" onclick="App.grantConsent()">I Consent &mdash; Enable Attendance Checkpoints</button>
+            </div>
           </div>
-          <div class="panel-bar stream-footer">
-            <span id="stream-count">SHOWING 0 PERSONNEL</span>
-            <span><span class="pulse"></span> WEBSOCKET EVENT PUMP | RATE: 42 EVENTS/SEC</span>
-            <span><span class="pulse"></span> PWA SYNC: 100% ONLINE</span>
+
+          <!-- GPS Office Perimeter Card -->
+          <div class="panel emp-geo-panel">
+            <div class="panel-header">
+              <span class="panel-title">Office Geofence Verification</span>
+              <div style="display:flex;gap:8px;align-items:center">
+                <button type="button" class="btn-tiny" id="btn-gps-toggle" onclick="App.toggleGpsSimulation()">⚡ Calibrate to HQ</button>
+                <span class="panel-right" id="emp-geo-status-tag"><span class="status-dot-pulse"></span> GPS Active</span>
+              </div>
+            </div>
+            <div class="emp-geo-body">
+              <div class="geo-stat-col">
+                <span class="meta-label">Registered Office</span>
+                <span class="meta-val cyan" id="emp-geo-target">HQ Alpha (San Francisco Campus)</span>
+              </div>
+              <div class="geo-stat-col">
+                <span class="meta-label">Device GPS Coordinates</span>
+                <span class="meta-val" id="emp-geo-coords">37.7749&deg; N, 122.4194&deg; W (&plusmn;1.2m)</span>
+              </div>
+              <div class="geo-stat-col">
+                <span class="meta-label">Distance to Office</span>
+                <span class="meta-val" id="emp-geo-distance">0.0m (Inside Perimeter)</span>
+              </div>
+              <div class="geo-stat-col">
+                <span class="meta-label">Geofence Status</span>
+                <span class="meta-val green" id="emp-geo-access">Inside Perimeter (Verified)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sequential Checkpoint Timeline -->
+          <div class="panel emp-cps-panel">
+            <div class="panel-header">
+              <span class="panel-title">Today's Shift Checkpoints</span>
+              <span class="panel-right">Enforced In Sequence &bull; Photo Verified</span>
+            </div>
+            <div class="emp-cps-body" id="emp-cps-list">
+              <div class="empty-state">Loading assigned shift checkpoints...</div>
+            </div>
+          </div>
+
+          <!-- Today's Activity Table -->
+          <div class="panel emp-history-panel">
+            <div class="panel-header">
+              <span class="panel-title">Today's Verified Attendance Log</span>
+              <span class="panel-right" id="emp-log-count">0 checkpoints logged today</span>
+            </div>
+            <div class="table-wrap" id="emp-history-table">
+              <div class="empty-state">No checkpoints logged today yet.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== DASHBOARD (LIVE MONITOR) ===== -->
+      <section id="view-dashboard" class="view active">
+
+        <!-- KPI STATS -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+            <div class="stat-data">
+              <span class="stat-label">Total Workforce</span>
+              <span class="stat-value" id="stat-total">--</span>
+              <span class="stat-desc">Registered personnel</span>
+            </div>
+          </div>
+          <div class="stat-card stat-green">
+            <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+            <div class="stat-data">
+              <span class="stat-label">Present On-Site</span>
+              <span class="stat-value" id="stat-present">--</span>
+              <span class="stat-desc">Inside office perimeter</span>
+            </div>
+          </div>
+          <div class="stat-card stat-red">
+            <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+            <div class="stat-data">
+              <span class="stat-label">Late Check-Ins</span>
+              <span class="stat-value" id="stat-late">--</span>
+              <span class="stat-desc">Grace buffer exceeded</span>
+            </div>
+          </div>
+          <div class="stat-card stat-amber">
+            <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg></div>
+            <div class="stat-data">
+              <span class="stat-label">On Break</span>
+              <span class="stat-value" id="stat-breaks">--</span>
+              <span class="stat-desc">Lunch & tea breaks</span>
+            </div>
+          </div>
+          <div class="stat-card stat-red">
+            <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+            <div class="stat-data">
+              <span class="stat-label">Perimeter Breaches</span>
+              <span class="stat-value" id="stat-breaches">--</span>
+              <span class="stat-desc">Rejected outside office</span>
+            </div>
+          </div>
+          <div class="stat-card stat-amber">
+            <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+            <div class="stat-data">
+              <span class="stat-label">Account Lockouts</span>
+              <span class="stat-value" id="stat-lockouts">--</span>
+              <span class="stat-desc">3 failed password locks</span>
+            </div>
           </div>
         </div>
 
-        <!-- LOCKOUTS -->
-        <div class="panel panel-lockouts">
-          <div class="panel-bar">
-            <span class="tag-cyan">SECURITY LOCKOUTS & FAILED ATTEMPTS</span>
-            <span class="tag-red">POLICY: 3-FAILED LOCK</span>
+        <!-- TWO COL: LATEST PHOTO VERIFICATION + OFFICE RADAR -->
+        <div class="two-col">
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Latest Photo Verification</span>
+              <span class="panel-right">Event ID: <span id="evt-id" style="font-family:var(--font-mono)">---</span></span>
+            </div>
+            <div class="panel-body" id="live-event">
+              <div class="empty-state">Awaiting checkpoint verification signal...</div>
+            </div>
           </div>
-          <div class="lockouts-body" id="lockouts-body">
-            <div class="empty-state">No lockouts recorded</div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Office Geofence Visualizer</span>
+              <span class="badge badge-ok"><span id="geo-radius">50</span>m Radius Zone</span>
+            </div>
+            <div class="radar-wrap">
+              <canvas id="radar-canvas" width="360" height="360"></canvas>
+            </div>
+            <div class="radar-info">
+              <div><span class="ri-label">Inside Office</span><span class="ri-val green" id="ri-inside">-- Inside</span></div>
+              <div><span class="ri-label">GPS Accuracy</span><span class="ri-val">&plusmn;1.2m</span></div>
+              <div><span class="ri-label">Outside Perimeter</span><span class="ri-val red" id="ri-outside">-- Outside</span></div>
+            </div>
           </div>
         </div>
-      </div>
 
-    </section>
+        <!-- TWO COL: ACTIVITY STREAM + SECURITY LOCKOUTS -->
+        <div class="two-col two-col-wide">
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Live Attendance Activity</span>
+              <div class="filter-group">
+                <button class="filter-btn active" onclick="App.filterStream('all',this)">All Checkpoints</button>
+                <button class="filter-btn" onclick="App.filterStream('LATE',this)">Late Only</button>
+                <button class="filter-btn" onclick="App.filterStream('ON_TIME',this)">On-Time</button>
+                <button class="filter-btn" onclick="App.filterStream('REJECTED',this)">Breaches</button>
+              </div>
+            </div>
+            <div class="stream-body" id="stream-body">
+              <div class="empty-state">Loading attendance stream...</div>
+            </div>
+            <div class="stream-footer">
+              <span id="stream-count">0 Personnel Records</span>
+              <span>Secure WebSocket Telemetry</span>
+            </div>
+          </div>
 
-    <!-- ===== EMPLOYEES ===== -->
-    <section id="view-employees" class="view">
-      <div class="view-head">
-        <h2>PERSONNEL ROSTER</h2>
-        <button class="btn-glow" onclick="App.showModalAddEmployee()">+ ADD PERSONNEL</button>
-      </div>
-      <div class="table-wrap" id="table-employees"></div>
-    </section>
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Security & Account Lockouts</span>
+              <span class="badge badge-late">Policy: 3-Failed Lock</span>
+            </div>
+            <div class="panel-body" id="lockouts-body" style="padding:10px">
+              <div class="empty-state">No accounts currently locked out.</div>
+            </div>
+          </div>
+        </div>
 
-    <!-- ===== GEOFENCE ===== -->
-    <section id="view-geofence" class="view">
-      <div class="view-head">
-        <h2>GEOFENCE CONFIGURATION</h2>
-        <button class="btn-glow" onclick="App.showModalAddGeofence()">+ ADD ZONE</button>
-      </div>
-      <div class="table-wrap" id="table-geofence"></div>
-    </section>
+      </section>
 
-    <!-- ===== SHIFTS ===== -->
-    <section id="view-shifts" class="view">
-      <div class="view-head">
-        <h2>SHIFT ENGINE</h2>
-        <button class="btn-glow" onclick="App.showModalAddShift()">+ ADD SHIFT</button>
-      </div>
-      <div class="table-wrap" id="table-shifts"></div>
-    </section>
+      <!-- ===== ATTENDANCE FOLDER HIERARCHY ===== -->
+      <section id="view-folders" class="view">
+        <div class="view-head">
+          <div>
+            <h2>Attendance Folder Hierarchy</h2>
+            <div class="view-sub">Department &rarr; Employee &rarr; Date &rarr; Verified Checkpoints</div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button class="btn-taupe" onclick="App.loadFolders()">🔄 Refresh Folders</button>
+            <button class="btn-primary" style="width:auto" onclick="App.exportCsv()">⬇ Export CSV</button>
+          </div>
+        </div>
+        <div id="folders-container" class="folders-container">
+          <div class="empty-state">Loading attendance folder hierarchy...</div>
+        </div>
+      </section>
 
-    <!-- ===== SECTIONS ===== -->
-    <section id="view-sections" class="view">
-      <div class="view-head">
-        <h2>SECTOR MANAGEMENT</h2>
-        <button class="btn-glow" onclick="App.showModalAddSection()">+ ADD SECTOR</button>
-      </div>
-      <div class="table-wrap" id="table-sections"></div>
-    </section>
+      <!-- ===== EMPLOYEES DIRECTORY ===== -->
+      <section id="view-employees" class="view">
+        <div class="view-head">
+          <div>
+            <h2>Employees Directory</h2>
+            <div class="view-sub">Manage workforce assignments, shifts, and credentials</div>
+          </div>
+          <button class="btn-primary" style="width:auto" onclick="App.showModalAddEmployee()">+ Add Employee</button>
+        </div>
+        <div class="table-wrap" id="table-employees"></div>
+      </section>
 
-    <!-- ===== AUDIT ===== -->
-    <section id="view-audit" class="view">
-      <div class="view-head"><h2>AUDIT TRAIL</h2></div>
-      <div class="table-wrap" id="table-audit"></div>
-    </section>
+      <!-- ===== GEOFENCE ZONES ===== -->
+      <section id="view-geofence" class="view">
+        <div class="view-head">
+          <div>
+            <h2>Office Geofence Zones</h2>
+            <div class="view-sub">Configurable facility perimeters for presence validation</div>
+          </div>
+          <button class="btn-primary" style="width:auto" onclick="App.showModalAddGeofence()">+ Add Geofence Zone</button>
+        </div>
+        <div class="table-wrap" id="table-geofence"></div>
+      </section>
 
-    <!-- ===== SETTINGS ===== -->
-    <section id="view-settings" class="view">
-      <div class="view-head"><h2>SYSTEM CONFIGURATION</h2></div>
-      <div class="settings-body" id="settings-body"></div>
-    </section>
+      <!-- ===== SHIFTS ===== -->
+      <section id="view-shifts" class="view">
+        <div class="view-head">
+          <div>
+            <h2>Shift Engine & Schedules</h2>
+            <div class="view-sub">Configure up to 6 shifts per day with grace periods and sequential checkpoints</div>
+          </div>
+          <button class="btn-primary" style="width:auto" onclick="App.showModalAddShift()">+ Add Shift</button>
+        </div>
+        <div class="table-wrap" id="table-shifts"></div>
+      </section>
 
-  </main>
+      <!-- ===== SECTIONS / DEPARTMENTS ===== -->
+      <section id="view-sections" class="view">
+        <div class="view-head">
+          <div>
+            <h2>Departments & Sections</h2>
+            <div class="view-sub">Manage organizational departments and sectional access control</div>
+          </div>
+          <button class="btn-primary" style="width:auto" onclick="App.showModalAddSection()">+ Add Department</button>
+        </div>
+        <div class="table-wrap" id="table-sections"></div>
+      </section>
+
+      <!-- ===== AUDIT LOG ===== -->
+      <section id="view-audit" class="view">
+        <div class="view-head">
+          <div>
+            <h2>Immutable Audit Trail</h2>
+            <div class="view-sub">Security log of all geofence breaches, lockouts, and administrative overrides</div>
+          </div>
+        </div>
+        <div class="table-wrap" id="table-audit"></div>
+      </section>
+
+      <!-- ===== SYSTEM SETTINGS ===== -->
+      <section id="view-settings" class="view">
+        <div class="view-head">
+          <div>
+            <h2>System Configuration</h2>
+            <div class="view-sub">Global session timeout, geofence radius, and data retention policies</div>
+          </div>
+        </div>
+        <div class="panel" style="max-width:600px">
+          <div class="panel-body" id="settings-body"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
 </div>
 
-<!-- MODAL -->
+<!-- GENERAL MODAL -->
 <div id="modal-overlay" class="modal-overlay">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-head">
@@ -280,10 +443,81 @@
   </div>
 </div>
 
-<!-- TOAST -->
+<!-- CAMERA CAPTURE MODAL -->
+<div id="modal-camera" class="modal-overlay">
+  <div class="modal modal-cam" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <h3 id="cam-modal-title">Photo & GPS Checkpoint Verification</h3>
+      <button class="modal-close" onclick="App.closeCamModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="cam-viewport-wrap">
+        <video id="cam-video" autoplay playsinline muted></video>
+        <canvas id="cam-canvas" style="display:none"></canvas>
+        <img id="cam-preview" style="display:none" alt="Checkpoint Verification Photo">
+        <div class="cam-face-guide"></div>
+        <div class="cam-hud-watermark" id="cam-watermark">
+          <div id="cam-wm-name">Employee &bull; Verification</div>
+          <div id="cam-wm-gps">GPS: 37.7749&deg; N, 122.4194&deg; W</div>
+          <div id="cam-wm-time">Time: --:--:--Z</div>
+        </div>
+      </div>
+      <div class="cam-hud-actions">
+        <div id="cam-controls-capture" class="cam-btn-row">
+          <button type="button" class="btn-primary" style="flex:1" id="btn-snap-photo" onclick="App.snapPhoto()">📸 Capture Photo</button>
+          <button type="button" class="btn-taupe" onclick="App.simulateSnapshot()">Simulate Camera</button>
+        </div>
+        <div id="cam-controls-review" class="cam-btn-row" style="display:none">
+          <button type="button" class="btn-taupe" onclick="App.retakePhoto()">🔄 Retake</button>
+          <button type="button" class="btn-primary" style="flex:1" id="btn-confirm-cp" onclick="App.submitCapturedCheckpoint()">✅ Confirm & Transmit Checkpoint</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SESSION RE-LOCK MODAL (ON BACK BUTTON OR IDLE) -->
+<div id="modal-relock" class="modal-overlay">
+  <div class="modal" style="max-width:400px" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <h3>Session Re-Locked</h3>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--txt-secondary);margin-bottom:14px;font-size:12px;line-height:1.5">Browser navigation was intercepted or your session has timed out. Re-enter your password to resume.</p>
+      <div class="form-group">
+        <label>User Account</label>
+        <input type="text" id="relock-id" readonly style="opacity:0.8">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="relock-pw" placeholder="Enter password to resume" autofocus>
+      </div>
+      <div id="relock-error" class="login-error"></div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="btn-primary" style="flex:1" onclick="App.unlockRelockedSession()">Resume Session</button>
+        <button class="btn-taupe" onclick="App.logout()">Logout</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PWA INSTALL PROMPT BANNER -->
+<div id="pwa-install-banner" class="pwa-banner hidden">
+  <div class="pwa-banner-content">
+    <span class="pwa-icon">📲</span>
+    <div class="pwa-text">
+      <b>Install AttendX App</b>
+      <span>Install on home screen for rapid 3-tap attendance</span>
+    </div>
+    <button class="btn-primary" style="width:auto;padding:6px 12px;margin:0" onclick="App.installPwa()">Install</button>
+    <button class="btn-tiny" onclick="App.dismissPwa()">✕</button>
+  </div>
+</div>
+
+<!-- TOASTS -->
 <div id="toast-container" class="toast-container"></div>
 
-<script src="/js/app.js?v=3"></script>
+<script src="/js/app.js?v=6"></script>
 <script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{});</script>
 </body>
 </html>

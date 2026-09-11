@@ -33,8 +33,9 @@ function superAdminOnly(req, res, next) {
 }
 
 function checkLockout(identity) {
-  const r = db.prepare('SELECT COUNT(*) as n FROM login_attempts WHERE identity=? AND success=0 AND id > COALESCE((SELECT MAX(id) FROM login_attempts WHERE identity=? AND success=1),0)').get(identity, identity);
-  return { locked: r.n >= MAX_ATTEMPTS, remaining: Math.max(0, MAX_ATTEMPTS - r.n) };
+  const r = db.prepare('SELECT COUNT(*) as n FROM login_attempts WHERE LOWER(identity)=LOWER(?) AND success=0 AND rowid > COALESCE((SELECT MAX(rowid) FROM login_attempts WHERE LOWER(identity)=LOWER(?) AND success=1),0)').get(identity, identity);
+  const n = r ? r.n : 0;
+  return { locked: n >= MAX_ATTEMPTS, remaining: Math.max(0, MAX_ATTEMPTS - n), failedAttempts: n };
 }
 
 function recordAttempt(identity, role, success, reason, ip) {
@@ -42,7 +43,7 @@ function recordAttempt(identity, role, success, reason, ip) {
 }
 
 function resetAttempts(identity) {
-  // Simply insert a success record to break the fail streak
+  // Insert a success record to break the fail streak
   db.prepare("INSERT INTO login_attempts (id,identity,role,success,reason) VALUES (?,?,?,1,'RESET')").run(uuid(), identity, 'reset');
 }
 
