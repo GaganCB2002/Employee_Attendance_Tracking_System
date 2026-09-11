@@ -102,18 +102,18 @@ export default function FloorsPage() {
                     <span className="text-[10px] text-sky-400 font-bold uppercase">LEVEL {floor.level} &bull; {floor.code}</span>
                     <h3 className="text-base font-bold text-app-text">{floor.name}</h3>
                   </div>
-                  <span className="text-xs px-2.5 py-1 rounded-full bg-zinc-900 border border-app-border text-zinc-300 font-bold flex items-center gap-1">
-                    <Users size={12} className="text-emerald-400" />
+                  <span className="text-xs px-2.5 py-1 rounded-full bg-slate-100 dark:bg-zinc-900 border border-app-border text-app-text font-bold flex items-center gap-1 shadow-xs">
+                    <Users size={12} className="text-emerald-600 dark:text-emerald-400" />
                     <span>{floor._count?.employees || 0} Occupants</span>
                   </span>
                 </div>
 
-                <p className="text-xs text-app-muted mt-2 line-clamp-2">{floor.description || 'General facility operations.'}</p>
+                <p className="text-xs text-app-muted mt-2 line-clamp-2 font-medium">{floor.description || 'General facility operations.'}</p>
               </div>
 
-              <div className="pt-3 border-t border-app-border flex items-center justify-between text-xs text-zinc-400">
-                <span className="text-emerald-400 font-bold">&bull; Monitored</span>
-                <span className="text-[10px] text-zinc-500">{new Date(floor.createdAt).toLocaleDateString()}</span>
+              <div className="pt-3 border-t border-app-border flex items-center justify-between text-xs text-app-muted">
+                <span className="text-emerald-600 dark:text-emerald-400 font-bold">&bull; Monitored</span>
+                <span className="text-[10px] text-app-muted">{new Date(floor.createdAt).toLocaleDateString()}</span>
               </div>
             </div>
           ))}
@@ -121,67 +121,67 @@ export default function FloorsPage() {
 
         {/* Create Floor Modal */}
         {showCreateModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs font-mono">
-            <div className="bg-app-surface border border-app-border rounded-2xl w-full max-w-md p-5 shadow-2xl space-y-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs font-mono">
+            <div className="bg-app-surface border border-app-border rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-4">
               <h2 className="text-base font-bold text-app-text flex items-center gap-2">
-                <Layers size={18} className="text-sky-400" /> Add Facility Floor
+                <Layers size={18} className="text-sky-600 dark:text-sky-400" /> Add Facility Floor
               </h2>
-              <form onSubmit={handleCreate} className="space-y-3 text-xs">
+              <form onSubmit={handleCreate} className="space-y-3.5 text-xs">
                 <div>
-                  <label className="block text-zinc-400 mb-1">Floor Name *</label>
+                  <label className="block text-app-muted mb-1 font-medium">Floor Name *</label>
                   <input
                     type="text"
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="e.g. 6th Floor Penthouse Lab"
-                    className="w-full px-3 py-2 bg-zinc-900 border border-app-border rounded-lg text-app-text focus:outline-hidden focus:border-sky-500"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-900 border border-app-border rounded-lg text-app-text focus:outline-hidden focus:ring-1 focus:ring-sky-500 font-medium"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-zinc-400 mb-1">Floor Code *</label>
+                    <label className="block text-app-muted mb-1 font-medium">Floor Code *</label>
                     <input
                       type="text"
                       required
                       value={formData.code}
                       onChange={(e) => setFormData({ ...formData, code: e.target.value })}
                       placeholder="e.g. FL-06"
-                      className="w-full px-3 py-2 bg-zinc-900 border border-app-border rounded-lg text-app-text focus:outline-hidden focus:border-sky-500"
+                      className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-900 border border-app-border rounded-lg text-app-text focus:outline-hidden focus:ring-1 focus:ring-sky-500 font-medium"
                     />
                   </div>
                   <div>
-                    <label className="block text-zinc-400 mb-1">Level Number *</label>
+                    <label className="block text-app-muted mb-1 font-medium">Level Number *</label>
                     <input
                       type="number"
                       required
                       value={formData.level}
                       onChange={(e) => setFormData({ ...formData, level: Number(e.target.value) })}
-                      className="w-full px-3 py-2 bg-zinc-900 border border-app-border rounded-lg text-app-text focus:outline-hidden focus:border-sky-500"
+                      className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-900 border border-app-border rounded-lg text-app-text focus:outline-hidden focus:ring-1 focus:ring-sky-500 font-medium"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-zinc-400 mb-1">Description</label>
+                  <label className="block text-app-muted mb-1 font-medium">Description</label>
                   <textarea
                     rows={3}
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     placeholder="Floor area details and security clearance..."
-                    className="w-full px-3 py-2 bg-zinc-900 border border-app-border rounded-lg text-app-text focus:outline-hidden focus:border-sky-500"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-900 border border-app-border rounded-lg text-app-text focus:outline-hidden focus:ring-1 focus:ring-sky-500 font-medium"
                   />
                 </div>
                 <div className="flex justify-end gap-2 pt-2">
                   <button
                     type="button"
                     onClick={() => setShowCreateModal(false)}
-                    className="px-3 py-2 rounded-lg bg-zinc-800 text-zinc-300 hover:bg-zinc-700"
+                    className="px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 text-app-text border border-app-border font-medium transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-semibold"
+                    className="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-semibold shadow-xs transition-colors"
                   >
                     Create
                   </button>

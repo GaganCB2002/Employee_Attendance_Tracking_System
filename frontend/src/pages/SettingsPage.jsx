@@ -153,103 +153,103 @@ export default function SettingsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
               <div>
-                <label className="block text-zinc-400 mb-1">Standard Work Start Time (24h)</label>
+                <label className="block text-app-muted mb-1 font-semibold">Standard Work Start Time (24h)</label>
                 <input
                   type="text"
                   value={rules.workStartTime}
                   onChange={(e) => setRules({ ...rules, workStartTime: e.target.value })}
                   placeholder="09:00"
-                  className="w-full px-3 py-2 bg-zinc-900 border border-app-border rounded-lg text-app-text"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-900 border border-app-border rounded-lg text-app-text"
                 />
               </div>
 
               <div>
-                <label className="block text-zinc-400 mb-1">Standard Work End Time (24h)</label>
+                <label className="block text-app-muted mb-1 font-semibold">Standard Work End Time (24h)</label>
                 <input
                   type="text"
                   value={rules.workEndTime}
                   onChange={(e) => setRules({ ...rules, workEndTime: e.target.value })}
                   placeholder="18:00"
-                  className="w-full px-3 py-2 bg-zinc-900 border border-app-border rounded-lg text-app-text"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-900 border border-app-border rounded-lg text-app-text"
                 />
               </div>
 
               <div>
-                <label className="block text-zinc-400 mb-1">Idle Threshold (Minutes)</label>
+                <label className="block text-app-muted mb-1 font-semibold">Idle Threshold (Minutes)</label>
                 <input
                   type="number"
                   min={1}
                   value={rules.idleThresholdMinutes}
                   onChange={(e) => setRules({ ...rules, idleThresholdMinutes: Number(e.target.value) })}
-                  className="w-full px-3 py-2 bg-zinc-900 border border-app-border rounded-lg text-app-text"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-900 border border-app-border rounded-lg text-app-text"
                 />
-                <span className="text-[10px] text-zinc-500">Flags employee as IDLE after this inactivity period</span>
+                <span className="text-[10px] text-app-muted">Flags employee as IDLE after this inactivity period</span>
               </div>
 
               <div>
-                <label className="block text-zinc-400 mb-1">Long Idle Threshold (Minutes)</label>
+                <label className="block text-app-muted mb-1 font-semibold">Long Idle Threshold (Minutes)</label>
                 <input
                   type="number"
                   min={5}
                   value={rules.longIdleThresholdMinutes}
                   onChange={(e) => setRules({ ...rules, longIdleThresholdMinutes: Number(e.target.value) })}
-                  className="w-full px-3 py-2 bg-zinc-900 border border-app-border rounded-lg text-app-text"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-900 border border-app-border rounded-lg text-app-text"
                 />
-                <span className="text-[10px] text-zinc-500">Triggers visual warning highlight &amp; Live TV alert</span>
+                <span className="text-[10px] text-app-muted">Triggers visual warning highlight &amp; Live TV alert</span>
               </div>
 
               <div>
-                <label className="block text-zinc-400 mb-1">Normal Break Limit (Minutes)</label>
+                <label className="block text-app-muted mb-1 font-semibold">Normal Break Limit (Minutes)</label>
                 <input
                   type="number"
                   min={5}
                   value={rules.breakLimitMinutes}
                   onChange={(e) => setRules({ ...rules, breakLimitMinutes: Number(e.target.value) })}
-                  className="w-full px-3 py-2 bg-zinc-900 border border-app-border rounded-lg text-app-text"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-900 border border-app-border rounded-lg text-app-text"
                 />
               </div>
 
               <div>
-                <label className="block text-zinc-400 mb-1">Long Break Threshold (Minutes)</label>
+                <label className="block text-app-muted mb-1 font-semibold">Long Break Threshold (Minutes)</label>
                 <input
                   type="number"
                   min={10}
                   value={rules.longBreakThresholdMinutes}
                   onChange={(e) => setRules({ ...rules, longBreakThresholdMinutes: Number(e.target.value) })}
-                  className="w-full px-3 py-2 bg-zinc-900 border border-app-border rounded-lg text-app-text"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-900 border border-app-border rounded-lg text-app-text"
                 />
-                <span className="text-[10px] text-zinc-500">Flags break duration breach</span>
+                <span className="text-[10px] text-app-muted">Flags break duration breach</span>
               </div>
 
               <div>
-                <label className="block text-zinc-400 mb-1">Late Arrival Threshold (Time)</label>
+                <label className="block text-app-muted mb-1 font-semibold">Late Arrival Threshold (Time)</label>
                 <input
                   type="text"
                   value={rules.lateThresholdTime}
                   onChange={(e) => setRules({ ...rules, lateThresholdTime: e.target.value })}
                   placeholder="09:15"
-                  className="w-full px-3 py-2 bg-zinc-900 border border-app-border rounded-lg text-app-text"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-900 border border-app-border rounded-lg text-app-text"
                 />
-                <span className="text-[10px] text-zinc-500">Logins after this timestamp marked as LATE</span>
+                <span className="text-[10px] text-app-muted">Logins after this timestamp marked as LATE</span>
               </div>
 
               <div>
-                <label className="block text-zinc-400 mb-1">Call Duration Warning (Minutes)</label>
+                <label className="block text-app-muted mb-1 font-semibold">Call Duration Warning (Minutes)</label>
                 <input
                   type="number"
                   min={5}
                   value={rules.callWarningMinutes}
                   onChange={(e) => setRules({ ...rules, callWarningMinutes: Number(e.target.value) })}
-                  className="w-full px-3 py-2 bg-zinc-900 border border-app-border rounded-lg text-app-text"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-900 border border-app-border rounded-lg text-app-text"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-zinc-400 mb-1">Default System Timezone</label>
+                <label className="block text-app-muted mb-1 font-semibold">Default System Timezone</label>
                 <select
                   value={rules.timezone}
                   onChange={(e) => setRules({ ...rules, timezone: e.target.value })}
-                  className="w-full px-3 py-2 bg-zinc-900 border border-app-border rounded-lg text-app-text"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-900 border border-app-border rounded-lg text-app-text"
                 >
                   <option value="Asia/Kolkata">Asia/Kolkata (IST - UTC+05:30)</option>
                   <option value="America/New_York">America/New_York (EST/EDT)</option>
@@ -341,23 +341,23 @@ export default function SettingsPage() {
                   { key: 'info', label: 'Info Color' },
                   { key: 'border', label: 'Border Color' },
                 ].map(({ key, label }) => (
-                  <div key={key} className="p-2.5 rounded-lg bg-zinc-900 border border-app-border space-y-1.5">
-                    <div className="flex items-center justify-between text-[11px] text-zinc-400">
-                      <span>{label}</span>
-                      <span className="text-[10px] font-mono text-zinc-500">{tokens[key]}</span>
+                  <div key={key} className="p-2.5 rounded-lg bg-slate-50 dark:bg-zinc-900 border border-app-border space-y-1.5 shadow-xs">
+                    <div className="flex items-center justify-between text-[11px] text-app-muted">
+                      <span className="font-semibold text-app-text">{label}</span>
+                      <span className="text-[10px] font-mono text-app-muted">{tokens[key]}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <input
                         type="color"
                         value={tokens[key] || '#000000'}
                         onChange={(e) => updateToken(key, e.target.value)}
-                        className="w-8 h-8 rounded border-0 cursor-pointer bg-transparent"
+                        className="w-8 h-8 rounded border border-slate-300 dark:border-zinc-700 cursor-pointer bg-transparent"
                       />
                       <input
                         type="text"
                         value={tokens[key] || ''}
                         onChange={(e) => updateToken(key, e.target.value)}
-                        className="w-full px-2 py-1 bg-zinc-950 border border-zinc-800 rounded text-[11px] font-mono text-zinc-200"
+                        className="w-full px-2 py-1 bg-white dark:bg-zinc-950 border border-app-border rounded text-[11px] font-mono text-app-text"
                       />
                     </div>
                   </div>
@@ -409,7 +409,7 @@ export default function SettingsPage() {
         {activeTab === 'notifications' && (
           <div className="bg-app-surface border border-app-border rounded-xl p-5 shadow-xl space-y-4 text-xs">
             <h2 className="text-sm font-bold text-app-text flex items-center gap-2">
-              <Bell size={16} className="text-sky-400" /> Active Real-Time Monitoring Alerts
+              <Bell size={16} className="text-sky-500" /> Active Real-Time Monitoring Alerts
             </h2>
             <div className="space-y-2.5">
               {[
@@ -419,12 +419,12 @@ export default function SettingsPage() {
                 { title: 'Geofence Breach Alert', desc: 'Immediate incident broadcast when device submits from outside authorized zone', active: true },
                 { title: '3-Strike Lockout Alert', desc: 'Security event trigger on 3 consecutive failed login attempts', active: true },
               ].map((item, idx) => (
-                <div key={idx} className="p-3 rounded-lg bg-zinc-900 border border-app-border flex items-center justify-between">
+                <div key={idx} className="p-3 rounded-lg bg-slate-50 dark:bg-zinc-900 border border-app-border flex items-center justify-between shadow-xs">
                   <div>
-                    <div className="font-bold text-zinc-200">{item.title}</div>
-                    <div className="text-[11px] text-zinc-500">{item.desc}</div>
+                    <div className="font-bold text-app-text">{item.title}</div>
+                    <div className="text-[11px] text-app-muted">{item.desc}</div>
                   </div>
-                  <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold">
+                  <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 text-[10px] font-bold">
                     ENABLED
                   </span>
                 </div>

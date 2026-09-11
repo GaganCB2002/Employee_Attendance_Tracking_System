@@ -102,18 +102,18 @@ export default function DepartmentsPage() {
                     <span className="text-[10px] text-sky-400 font-bold uppercase">{dept.code}</span>
                     <h3 className="text-base font-bold text-app-text">{dept.name}</h3>
                   </div>
-                  <span className="text-xs px-2.5 py-1 rounded-full bg-zinc-900 border border-app-border text-zinc-300 font-bold flex items-center gap-1">
-                    <Users size={12} className="text-sky-400" />
+                  <span className="text-xs px-2.5 py-1 rounded-full bg-slate-100 dark:bg-zinc-900 border border-app-border text-app-text font-bold flex items-center gap-1 shadow-xs">
+                    <Users size={12} className="text-sky-600 dark:text-sky-400" />
                     <span>{dept._count?.employees || 0} Members</span>
                   </span>
                 </div>
 
-                <p className="text-xs text-app-muted mt-2 line-clamp-2">{dept.description || 'No description provided.'}</p>
+                <p className="text-xs text-app-muted mt-2 line-clamp-2 font-medium">{dept.description || 'No description provided.'}</p>
               </div>
 
-              <div className="pt-3 border-t border-app-border flex items-center justify-between text-xs text-zinc-400">
-                <span>Manager: <strong className="text-zinc-200">{dept.managerName || 'Unassigned'}</strong></span>
-                <span className="text-[10px] text-zinc-500">{new Date(dept.createdAt).toLocaleDateString()}</span>
+              <div className="pt-3 border-t border-app-border flex items-center justify-between text-xs text-app-muted">
+                <span>Manager: <strong className="text-app-text font-semibold">{dept.managerName || 'Unassigned'}</strong></span>
+                <span className="text-[10px] text-app-muted">{new Date(dept.createdAt).toLocaleDateString()}</span>
               </div>
             </div>
           ))}
@@ -121,65 +121,65 @@ export default function DepartmentsPage() {
 
         {/* Create Department Modal */}
         {showCreateModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs font-mono">
-            <div className="bg-app-surface border border-app-border rounded-2xl w-full max-w-md p-5 shadow-2xl space-y-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs font-mono">
+            <div className="bg-app-surface border border-app-border rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-4">
               <h2 className="text-base font-bold text-app-text flex items-center gap-2">
-                <Building2 size={18} className="text-sky-400" /> Add New Department
+                <Building2 size={18} className="text-sky-600 dark:text-sky-400" /> Add New Department
               </h2>
-              <form onSubmit={handleCreate} className="space-y-3 text-xs">
+              <form onSubmit={handleCreate} className="space-y-3.5 text-xs">
                 <div>
-                  <label className="block text-zinc-400 mb-1">Department Name *</label>
+                  <label className="block text-app-muted mb-1 font-medium">Department Name *</label>
                   <input
                     type="text"
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="e.g. Avionics & Propulsion"
-                    className="w-full px-3 py-2 bg-zinc-900 border border-app-border rounded-lg text-app-text focus:outline-hidden focus:border-sky-500"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-900 border border-app-border rounded-lg text-app-text focus:outline-hidden focus:ring-1 focus:ring-sky-500 font-medium"
                   />
                 </div>
                 <div>
-                  <label className="block text-zinc-400 mb-1">Department Code *</label>
+                  <label className="block text-app-muted mb-1 font-medium">Department Code *</label>
                   <input
                     type="text"
                     required
                     value={formData.code}
                     onChange={(e) => setFormData({ ...formData, code: e.target.value })}
                     placeholder="e.g. DEPT-AVIONICS"
-                    className="w-full px-3 py-2 bg-zinc-900 border border-app-border rounded-lg text-app-text focus:outline-hidden focus:border-sky-500"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-900 border border-app-border rounded-lg text-app-text focus:outline-hidden focus:ring-1 focus:ring-sky-500 font-medium"
                   />
                 </div>
                 <div>
-                  <label className="block text-zinc-400 mb-1">Division Manager</label>
+                  <label className="block text-app-muted mb-1 font-medium">Division Manager</label>
                   <input
                     type="text"
                     value={formData.managerName}
                     onChange={(e) => setFormData({ ...formData, managerName: e.target.value })}
                     placeholder="e.g. Dr. Arthur Pendelton"
-                    className="w-full px-3 py-2 bg-zinc-900 border border-app-border rounded-lg text-app-text focus:outline-hidden focus:border-sky-500"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-900 border border-app-border rounded-lg text-app-text focus:outline-hidden focus:ring-1 focus:ring-sky-500 font-medium"
                   />
                 </div>
                 <div>
-                  <label className="block text-zinc-400 mb-1">Description</label>
+                  <label className="block text-app-muted mb-1 font-medium">Description</label>
                   <textarea
                     rows={3}
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     placeholder="Scope of work and responsibilities..."
-                    className="w-full px-3 py-2 bg-zinc-900 border border-app-border rounded-lg text-app-text focus:outline-hidden focus:border-sky-500"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-900 border border-app-border rounded-lg text-app-text focus:outline-hidden focus:ring-1 focus:ring-sky-500 font-medium"
                   />
                 </div>
                 <div className="flex justify-end gap-2 pt-2">
                   <button
                     type="button"
                     onClick={() => setShowCreateModal(false)}
-                    className="px-3 py-2 rounded-lg bg-zinc-800 text-zinc-300 hover:bg-zinc-700"
+                    className="px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 text-app-text border border-app-border font-medium transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-semibold"
+                    className="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-semibold shadow-xs transition-colors"
                   >
                     Create
                   </button>

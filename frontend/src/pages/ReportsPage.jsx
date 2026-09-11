@@ -106,7 +106,7 @@ export default function ReportsPage() {
 
         {/* Report Type Switcher & Filters */}
         <div className="bg-app-surface border border-app-border rounded-xl p-3.5 shadow-md flex flex-wrap items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-1.5 p-1 bg-zinc-900 rounded-lg border border-app-border">
+          <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-zinc-900 rounded-lg border border-app-border">
             {[
               { id: 'attendance', label: 'Attendance Report' },
               { id: 'activity', label: 'Activity & Times' },
@@ -118,8 +118,8 @@ export default function ReportsPage() {
                 onClick={() => setReportType(tab.id)}
                 className={`px-3 py-1.5 rounded text-xs font-semibold transition-colors ${
                   reportType === tab.id
-                    ? 'bg-sky-600 text-white shadow-sm'
-                    : 'text-zinc-400 hover:text-zinc-200'
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-200'
                 }`}
               >
                 {tab.label}
@@ -128,13 +128,13 @@ export default function ReportsPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-1.5 text-zinc-400">
+            <div className="flex items-center gap-1.5 text-slate-500 dark:text-zinc-400">
               <Calendar size={13} />
               <input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="bg-zinc-900 border border-app-border rounded px-2.5 py-1 text-xs text-app-text"
+                className="bg-slate-50 dark:bg-zinc-900 border border-app-border rounded px-2.5 py-1 text-xs text-app-text"
               />
             </div>
 
@@ -142,7 +142,7 @@ export default function ReportsPage() {
               <select
                 value={selectedDept}
                 onChange={(e) => setSelectedDept(e.target.value)}
-                className="bg-zinc-900 border border-app-border rounded px-2.5 py-1 text-xs text-app-text"
+                className="bg-slate-50 dark:bg-zinc-900 border border-app-border rounded px-2.5 py-1 text-xs text-app-text"
               >
                 <option value="">All Departments</option>
                 {departments.map((d) => (
@@ -155,7 +155,7 @@ export default function ReportsPage() {
               <select
                 value={selectedFloor}
                 onChange={(e) => setSelectedFloor(e.target.value)}
-                className="bg-zinc-900 border border-app-border rounded px-2.5 py-1 text-xs text-app-text"
+                className="bg-slate-50 dark:bg-zinc-900 border border-app-border rounded px-2.5 py-1 text-xs text-app-text"
               >
                 <option value="">All Floors</option>
                 {floors.map((f) => (
@@ -170,13 +170,13 @@ export default function ReportsPage() {
         <div className="bg-app-surface border border-app-border rounded-xl shadow-xl overflow-hidden">
           <div className="overflow-x-auto">
             {isLoading ? (
-              <div className="py-12 text-center text-zinc-500 text-xs">Generating report data...</div>
+              <div className="py-12 text-center text-slate-500 dark:text-zinc-500 text-xs">Generating report data...</div>
             ) : reports.length === 0 ? (
-              <div className="py-12 text-center text-zinc-500 text-xs">No records found matching criteria.</div>
+              <div className="py-12 text-center text-slate-500 dark:text-zinc-500 text-xs">No records found matching criteria.</div>
             ) : (
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-app-border bg-zinc-900/80 text-[10px] uppercase text-app-muted">
+                  <tr className="border-b border-app-border bg-slate-50 dark:bg-zinc-900/80 text-[10px] uppercase text-app-muted">
                     {Object.keys(reports[0]).map((col) => (
                       <th key={col} className="p-3 font-mono">
                         {col.replace(/([A-Z])/g, ' $1')}
@@ -186,9 +186,9 @@ export default function ReportsPage() {
                 </thead>
                 <tbody className="divide-y divide-app-border">
                   {reports.map((row, idx) => (
-                    <tr key={idx} className="hover:bg-zinc-900/50 transition-colors">
+                    <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-zinc-900/50 transition-colors">
                       {Object.keys(row).map((col) => (
-                        <td key={col} className="p-3 font-mono text-zinc-300">
+                        <td key={col} className="p-3 font-mono text-slate-700 dark:text-zinc-300">
                           {String(row[col])}
                         </td>
                       ))}

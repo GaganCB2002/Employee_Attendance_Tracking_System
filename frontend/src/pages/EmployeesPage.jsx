@@ -107,26 +107,26 @@ export default function EmployeesPage() {
         {/* Search */}
         <div className="bg-app-surface border border-app-border rounded-xl p-3 shadow-md flex items-center justify-between gap-3 text-xs">
           <div className="relative flex-1">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by Employee Name, ID, or Department..."
-              className="w-full pl-9 pr-3 py-1.5 bg-zinc-900 border border-app-border rounded-lg text-app-text text-xs focus:outline-hidden focus:border-sky-500"
+              className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-zinc-900 border border-app-border rounded-lg text-app-text text-xs focus:outline-hidden focus:ring-1 focus:ring-sky-500 font-medium"
             />
           </div>
-          <span className="text-zinc-500 text-[11px] font-mono">
+          <span className="text-app-muted text-[11px] font-mono font-medium">
             {filtered.length} Employees Found
           </span>
         </div>
 
         {/* Employees Table */}
-        <div className="bg-app-surface border border-app-border rounded-xl shadow-xl overflow-hidden">
+        <div className="bg-app-surface border border-app-border rounded-xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-app-border bg-zinc-900/80 text-[10px] uppercase text-app-muted">
+                <tr className="border-b border-app-border bg-slate-50 dark:bg-zinc-900/80 text-[10px] uppercase text-app-muted font-bold">
                   <th className="p-3">Employee</th>
                   <th className="p-3">Employee ID</th>
                   <th className="p-3">Department</th>
@@ -141,7 +141,7 @@ export default function EmployeesPage() {
                 {filtered.map((emp) => {
                   const isLocked = emp.status === 'LOCKED';
                   return (
-                    <tr key={emp.id} className="hover:bg-zinc-900/50 transition-colors">
+                    <tr key={emp.id} className="hover:bg-slate-50 dark:hover:bg-zinc-900/50 transition-colors">
                       <td className="p-3">
                         <div
                           onClick={() => setSelectedProfileId(emp.id)}
@@ -150,27 +150,27 @@ export default function EmployeesPage() {
                           <img
                             src={emp.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=dbeafe&color=1d4ed8`}
                             alt={emp.name}
-                            className="w-8 h-8 rounded-full object-cover border border-blue-400/40 shrink-0"
+                            className="w-8 h-8 rounded-full object-cover border border-blue-400/40 shrink-0 shadow-xs"
                           />
                           <div>
-                            <div className="font-bold text-zinc-200 group-hover:text-sky-400 transition-colors">
+                            <div className="font-bold text-app-text group-hover:text-sky-600 transition-colors">
                               {emp.name}
                             </div>
-                            <div className="text-[10px] text-zinc-500">{emp.jobTitle || 'Team Member'}</div>
+                            <div className="text-[10px] text-app-muted">{emp.jobTitle || 'Team Member'}</div>
                           </div>
                         </div>
                       </td>
-                      <td className="p-3 font-mono text-zinc-400">{emp.employeeCode}</td>
-                      <td className="p-3 font-semibold text-zinc-300">{emp.department?.name || 'General'}</td>
-                      <td className="p-3 text-zinc-400">{emp.floor?.name || 'Ground Floor'}</td>
-                      <td className="p-3 text-zinc-400">{emp.section?.name}</td>
-                      <td className="p-3 text-zinc-400 font-mono text-[11px]">{emp.shift?.name}</td>
+                      <td className="p-3 font-mono text-app-muted font-medium">{emp.employeeCode}</td>
+                      <td className="p-3 font-semibold text-app-text">{emp.department?.name || 'General'}</td>
+                      <td className="p-3 text-app-muted">{emp.floor?.name || 'Ground Floor'}</td>
+                      <td className="p-3 text-app-muted">{emp.section?.name}</td>
+                      <td className="p-3 text-app-muted font-mono text-[11px]">{emp.shift?.name}</td>
                       <td className="p-3">
                         <span
                           className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
                             isLocked
-                              ? 'bg-rose-500/10 text-rose-400 border-rose-500/30'
-                              : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                              ? 'bg-rose-50 text-rose-700 border-rose-300 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/30'
+                              : 'bg-emerald-50 text-emerald-700 border-emerald-300 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/30'
                           }`}
                         >
                           {emp.status}
@@ -181,7 +181,7 @@ export default function EmployeesPage() {
                           {isLocked && (
                             <button
                               onClick={() => handleUnlock(emp.id, emp.name)}
-                              className="px-2 py-1 rounded bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-bold flex items-center gap-1"
+                              className="px-2 py-1 rounded-md bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-bold flex items-center gap-1 shadow-xs"
                               title="Unlock account after 3-strike lockout"
                             >
                               <Unlock size={11} /> Unlock
@@ -189,7 +189,7 @@ export default function EmployeesPage() {
                           )}
                           <button
                             onClick={() => setSelectedProfileId(emp.id)}
-                            className="px-2.5 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-sky-400 text-[11px] font-semibold"
+                            className="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 text-sky-600 dark:text-sky-400 text-[11px] font-semibold border border-app-border shadow-xs transition-colors"
                           >
                             Profile
                           </button>
@@ -205,11 +205,11 @@ export default function EmployeesPage() {
 
         {/* Add Employee Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs">
-            <div className="bg-app-surface border border-app-border rounded-2xl w-full max-w-xl p-5 shadow-2xl space-y-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+            <div className="bg-app-surface border border-app-border rounded-2xl w-full max-w-xl p-6 shadow-2xl space-y-4">
               <div className="flex items-center justify-between pb-2 border-b border-app-border">
                 <h2 className="text-base font-bold text-app-text">Onboard New Employee</h2>
-                <button onClick={() => setShowAddModal(false)} className="text-zinc-500 hover:text-zinc-300">
+                <button onClick={() => setShowAddModal(false)} className="text-app-muted hover:text-app-text">
                   <X size={18} />
                 </button>
               </div>

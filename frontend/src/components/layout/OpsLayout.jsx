@@ -19,20 +19,24 @@ export default function OpsLayout({ children, selectedSection, onSectionChange, 
   return (
     <div className="min-h-screen bg-app-bg text-app-text font-sans flex transition-colors duration-200">
       {/* Persistent Left-Side Navigation Bar */}
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
 
-      {/* Main Operations Area (Offset by left sidebar on desktop) */}
-      <div className="flex-1 min-w-0 md:pl-64 flex flex-col min-h-screen">
+      {/* Main Operations Area */}
+      <div className={`flex-1 min-w-0 flex flex-col min-h-screen transition-all duration-200 ${sidebarOpen ? 'md:pl-64' : 'md:pl-64'}`}>
         {/* Top Telemetry Header */}
         <header className="border-b border-app-border bg-app-header backdrop-blur-sm sticky top-0 z-30 select-none transition-colors duration-200 shadow-xs">
           <div className="flex items-center gap-3 px-4 py-2.5 overflow-x-auto">
-            {/* Mobile Hamburger Toggle */}
+            {/* 3-Line Hamburger Menu Toggle Button on Left Side */}
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-1.5 rounded-lg border border-app-border text-app-muted hover:text-app-text hover:bg-app-surface md:hidden"
-              aria-label="Toggle navigation"
+              className="p-1.5 rounded-lg border border-app-border bg-app-surface text-app-text hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors flex items-center justify-center shadow-xs"
+              aria-label="Toggle navigation menu (3 Lines)"
+              title="Toggle Navigation Menu (3 Lines)"
             >
-              {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
+              <Menu size={18} />
             </button>
 
             {/* Breadcrumb / Node Path */}
