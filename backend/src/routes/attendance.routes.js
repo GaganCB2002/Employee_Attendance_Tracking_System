@@ -24,6 +24,10 @@ router.post(
 );
 router.get('/my', AttendanceController.getMyRecords);
 
+// Exit Security Verification & Breach Handling
+router.post('/verify-exit-code', CheckpointController.verifyExitCode);
+router.post('/security-breach', CheckpointController.recordSecurityBreach);
+
 // Admin & Ops Views
 router.get('/', requireAdmin, enforceSectionScope, AttendanceController.list);
 router.get('/folder', requireAdmin, enforceSectionScope, AttendanceController.getFolderView);

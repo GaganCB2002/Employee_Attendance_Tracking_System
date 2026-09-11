@@ -98,6 +98,7 @@ app.get('/api/health', async (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/employees', employeeRoutes);
 app.use('/api/attendance', attendanceRoutes);
+app.use('/api/checkpoints', attendanceRoutes);
 app.use('/api/geofences', geofenceRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/live-tv', liveTvRoutes);

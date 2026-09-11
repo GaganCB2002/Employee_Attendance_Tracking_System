@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield, MapPin, Wifi, Clock, LogOut, RefreshCw, AlertTriangle } from 'lucide-react';
+import { Shield, MapPin, Wifi, Clock, LogOut, RefreshCw, AlertTriangle, KeyRound } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useGeolocation } from '../hooks/useGeolocation';
 import { attendanceApi } from '../api/attendance';
 import CheckpointButton from '../components/employee/CheckpointButton';
 import ShiftStatus from '../components/employee/ShiftStatus';
+import AdminExitSecurityModal from '../components/employee/AdminExitSecurityModal';
 import { zulu } from '../utils/time';
 
 export default function EmployeeCheckInPage() {
@@ -16,6 +17,7 @@ export default function EmployeeCheckInPage() {
   const [now, setNow] = useState(new Date());
   const [submitSuccess, setSubmitSuccess] = useState(null);
   const [submitError, setSubmitError] = useState(null);
+  const [showExitModal, setShowExitModal] = useState(false);
 
   // Watch device GPS
   const geo = useGeolocation();
@@ -38,8 +40,18 @@ export default function EmployeeCheckInPage() {
     return () => clearInterval(timer);
   }, []);
 
+  // Intercept window close / leave attempt
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      e.preventDefault();
+      e.returnValue = 'Station locked. Admin exit authorization required.';
+      return e.returnValue;
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
   // Geofence check: Default HQ-Alpha is Lat: 37.7749, Lng: -122.4194, Radius: 50m
-  // In dev / fallback mode, geo is within radius
   const isOutsideGeofence = geo.latitude > 37.785 || geo.latitude < 37.76;
   const breachMeters = isOutsideGeofence ? 65 : 0;
 
@@ -72,43 +84,47 @@ export default function EmployeeCheckInPage() {
     }
   };
 
-  const handleLogout = async () => {
+  const executeAuthorizedExit = async () => {
+    setShowExitModal(false);
     await logout();
     navigate('/login');
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-300 font-sans flex flex-col">
+    <div className="min-h-screen bg-app-bg text-app-text font-sans flex flex-col transition-colors duration-200">
       {/* Top Header */}
-      <header className="border-b border-zinc-800 bg-zinc-950 sticky top-0 z-20">
+      <header className="border-b border-app-border bg-app-surface sticky top-0 z-20 shadow-xs">
         <div className="flex items-center justify-between px-4 py-3 max-w-3xl mx-auto">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-sky-600 flex items-center justify-center shadow-lg shadow-sky-600/25">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-md shadow-blue-600/25">
               <Shield size={16} className="text-white" />
             </div>
             <div>
-              <div className="text-zinc-100 font-semibold text-xs font-mono">
+              <div className="text-app-text font-bold text-xs font-mono">
                 AttendX Station
               </div>
-              <div className="text-[10px] text-zinc-500 font-mono">
+              <div className="text-[10px] text-app-muted font-mono">
                 {user?.name} ({user?.employeeCode || 'EMP'})
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-2 text-xs font-mono">
-            <div className="flex items-center gap-1 text-[11px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 rounded px-2 py-1">
+            <div className="flex items-center gap-1 text-[11px] text-emerald-600 bg-emerald-50 border border-emerald-300 rounded px-2 py-1 font-semibold">
               <Wifi size={12} className="animate-pulse" /> Live
             </div>
-            <div className="flex items-center gap-1 text-[11px] text-zinc-400 bg-zinc-900 border border-zinc-800 rounded px-2 py-1">
+            <div className="flex items-center gap-1 text-[11px] text-app-muted bg-app-bg border border-app-border rounded px-2 py-1">
               <Clock size={12} /> {zulu(now)}Z
             </div>
+
+            {/* Exit Station Guard Trigger */}
             <button
-              onClick={handleLogout}
-              className="p-1.5 text-zinc-400 hover:text-red-400 rounded hover:bg-zinc-800 transition-colors"
-              title="Logout"
+              onClick={() => setShowExitModal(true)}
+              className="px-2.5 py-1 text-red-600 hover:bg-red-50 border border-red-200 rounded-lg font-semibold flex items-center gap-1 transition-colors text-[11px]"
+              title="Request Exit Authorization"
             >
-              <LogOut size={16} />
+              <KeyRound size={13} />
+              <span>Exit Station</span>
             </button>
           </div>
         </div>
@@ -118,15 +134,15 @@ export default function EmployeeCheckInPage() {
       <main className="flex-1 p-4 max-w-xl w-full mx-auto space-y-4">
         {/* GPS Live Geofence Banner */}
         <div
-          className={`p-3 rounded-lg border text-xs font-mono flex items-center justify-between ${
+          className={`p-3.5 rounded-xl border text-xs font-mono flex items-center justify-between shadow-xs ${
             isOutsideGeofence
-              ? 'bg-red-500/10 border-red-500/40 text-red-300'
-              : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+              ? 'bg-red-50 border-red-200 text-red-700'
+              : 'bg-emerald-50 border-emerald-200 text-emerald-800'
           }`}
         >
           <div className="flex items-center gap-2">
-            <MapPin size={14} className={isOutsideGeofence ? 'text-red-400' : 'text-emerald-400'} />
-            <span>
+            <MapPin size={15} className={isOutsideGeofence ? 'text-red-600' : 'text-emerald-600'} />
+            <span className="font-semibold">
               {isOutsideGeofence
                 ? `Perimeter Breach: ${breachMeters}m outside HQ`
                 : `Within Authorized Geofence (${geo.accuracy}m fix)`}
@@ -134,7 +150,7 @@ export default function EmployeeCheckInPage() {
           </div>
           <button
             onClick={geo.refresh}
-            className="text-[11px] flex items-center gap-1 text-zinc-400 hover:text-zinc-200"
+            className="text-[11px] font-semibold flex items-center gap-1 text-blue-600 hover:text-blue-700 transition-colors"
           >
             <RefreshCw size={11} /> Refresh Fix
           </button>
@@ -142,13 +158,13 @@ export default function EmployeeCheckInPage() {
 
         {/* Feedback alerts */}
         {submitSuccess && (
-          <div className="p-3 bg-emerald-500/15 border border-emerald-500/50 rounded-lg text-emerald-300 text-xs font-mono">
+          <div className="p-3 bg-emerald-50 border border-emerald-300 rounded-xl text-emerald-800 text-xs font-mono font-medium shadow-xs">
             {submitSuccess}
           </div>
         )}
 
         {submitError && (
-          <div className="p-3 bg-red-500/15 border border-red-500/50 rounded-lg text-red-300 text-xs font-mono">
+          <div className="p-3 bg-red-50 border border-red-300 rounded-xl text-red-800 text-xs font-mono font-medium shadow-xs">
             {submitError}
           </div>
         )}
@@ -170,6 +186,18 @@ export default function EmployeeCheckInPage() {
           completedRecords={shiftData?.completedRecords}
         />
       </main>
+
+      {/* Admin Exit Authorization & 2-Strike Photo Capture Guard */}
+      <AdminExitSecurityModal
+        isOpen={showExitModal}
+        onClose={() => setShowExitModal(false)}
+        onAuthorizedExit={executeAuthorizedExit}
+        coords={{
+          latitude: geo.latitude,
+          longitude: geo.longitude,
+          accuracy: geo.accuracy,
+        }}
+      />
     </div>
   );
 }

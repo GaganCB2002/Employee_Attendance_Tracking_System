@@ -263,6 +263,97 @@ const CheckpointController = {
       return res.status(500).json({ success: false, error: 'Failed to record checkpoint.' });
     }
   },
+
+  /**
+   * Verify Admin Exit Code
+   */
+  verifyExitCode: async (req, res) => {
+    try {
+      const { code } = req.body;
+      if (!code) {
+        return res.status(400).json({ success: false, error: 'Exit code is required.' });
+      }
+
+      // Check system settings for configured admin exit code
+      const setting = await prisma.systemSetting.findUnique({
+        where: { key: 'admin_exit_code' },
+      });
+
+      const validCode = setting?.value?.code || 'ADMIN99';
+
+      if (code.trim().toUpperCase() === validCode.toUpperCase()) {
+        return res.json({ success: true, message: 'Exit authorization confirmed.' });
+      } else {
+        return res.status(401).json({ success: false, error: 'Invalid administrator exit code.' });
+      }
+    } catch (error) {
+      console.error('[CHECKPOINT:VERIFY_EXIT_ERROR]', error);
+      return res.status(500).json({ success: false, error: 'Failed to verify exit code.' });
+    }
+  },
+
+  /**
+   * Record Security Breach & Catch Photo on Failed Exit Attempts
+   */
+  recordSecurityBreach: async (req, res) => {
+    try {
+      const employeeId = req.user?.id || null;
+      const { photoBase64, failedAttempts, reason, latitude, longitude, accuracy, enteredCode } = req.body;
+
+      let photoUrl = null;
+      if (photoBase64) {
+        photoUrl = saveBase64Media(photoBase64, 'checkpoints');
+      }
+
+      const emp = employeeId ? await prisma.employee.findUnique({
+        where: { id: employeeId },
+        include: { section: true, department: true }
+      }) : null;
+
+      const employeeName = emp?.name || 'Station Personnel';
+      const employeeCode = emp?.employeeCode || 'KIOSK-USER';
+
+      // Create LiveAlert in PostgreSQL database
+      const alert = await prisma.liveAlert.create({
+        data: {
+          employeeId: emp?.id || null,
+          type: 'SECURITY_BREACH',
+          severity: 'CRITICAL',
+          title: 'Unauthorized Exit Attempt — Photo Captured',
+          message: `${employeeName} (${employeeCode}) failed exit code authorization 2 times. Suspect photo captured at GPS coordinates [${latitude || '37.7749'}, ${longitude || '-122.4194'}].`,
+        },
+      });
+
+      // Broadcast real-time Socket.IO breach event to all active Ops & Live TV dashboards
+      broadcastBreachAlert({
+        type: 'SECURITY_BREACH',
+        severity: 'CRITICAL',
+        title: 'Unauthorized Exit Attempt — Photo Captured',
+        employeeId: emp?.id,
+        employeeName,
+        employeeCode,
+        photoUrl,
+        failedAttempts: failedAttempts || 2,
+        latitude,
+        longitude,
+        accuracy,
+        timestamp: new Date().toISOString(),
+      });
+
+      return res.status(201).json({
+        success: true,
+        message: 'Security breach logged. Snapshot dispatched to Security Operations.',
+        data: {
+          photoUrl,
+          alertId: alert.id,
+          timestamp: new Date().toISOString(),
+        }
+      });
+    } catch (error) {
+      console.error('[CHECKPOINT:SECURITY_BREACH_ERROR]', error);
+      return res.status(500).json({ success: false, error: 'Failed to record security breach.' });
+    }
+  },
 };
 
 module.exports = CheckpointController;

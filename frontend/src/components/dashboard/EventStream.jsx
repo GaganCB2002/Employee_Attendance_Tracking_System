@@ -6,30 +6,30 @@ const STATUS_STYLE = {
   ON_TIME: {
     label: 'On-site verified',
     ring: 'border-emerald-500/40',
-    text: 'text-emerald-400',
-    bg: 'bg-emerald-500/10',
-    dot: 'bg-emerald-400',
+    text: 'text-emerald-700 dark:text-emerald-400',
+    bg: 'bg-emerald-50 dark:bg-emerald-500/10',
+    dot: 'bg-emerald-500',
   },
   LATE: {
     label: 'Late flagged',
     ring: 'border-amber-500/40',
-    text: 'text-amber-400',
-    bg: 'bg-amber-500/10',
-    dot: 'bg-amber-400',
+    text: 'text-amber-700 dark:text-amber-400',
+    bg: 'bg-amber-50 dark:bg-amber-500/10',
+    dot: 'bg-amber-500',
   },
   BREACH: {
     label: 'Geofence breach',
-    ring: 'border-red-500/40',
-    text: 'text-red-400',
-    bg: 'bg-red-500/10',
-    dot: 'bg-red-400',
+    ring: 'border-rose-500/40',
+    text: 'text-rose-700 dark:text-rose-400',
+    bg: 'bg-rose-50 dark:bg-rose-500/10',
+    dot: 'bg-rose-500',
   },
   BREAK: {
     label: 'On break',
     ring: 'border-sky-500/40',
-    text: 'text-sky-400',
-    bg: 'bg-sky-500/10',
-    dot: 'bg-sky-400',
+    text: 'text-sky-700 dark:text-sky-400',
+    bg: 'bg-sky-50 dark:bg-sky-500/10',
+    dot: 'bg-sky-500',
   },
 };
 
@@ -53,21 +53,21 @@ function CheckpointTrack({ step = 1, status = 'ON_TIME' }) {
         return (
           <div key={lb} className="flex items-center gap-1">
             <span
-              className={`text-[10px] font-mono px-1.5 py-0.5 rounded border whitespace-nowrap ${
+              className={`text-[10px] font-mono px-1.5 py-0.5 rounded border whitespace-nowrap font-medium ${
                 failed
-                  ? 'bg-red-500/20 border-red-500/50 text-red-300'
+                  ? 'bg-rose-100 border-rose-300 text-rose-800 dark:bg-rose-500/20 dark:border-rose-500/50 dark:text-rose-300'
                   : active
-                  ? 'bg-sky-500/20 border-sky-500/50 text-sky-300'
+                  ? 'bg-sky-100 border-sky-300 text-sky-800 dark:bg-sky-500/20 dark:border-sky-500/50 dark:text-sky-300'
                   : done
-                  ? 'bg-zinc-800 border-zinc-700 text-zinc-400'
-                  : 'bg-zinc-900 border-zinc-800 text-zinc-600'
+                  ? 'bg-slate-100 border-slate-200 text-slate-700 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-400'
+                  : 'bg-slate-50 border-slate-200 text-slate-400 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-600'
               }`}
             >
               {idx}.{lb}
               {failed ? ' (FAILED)' : ''}
             </span>
             {i < labels.length - 1 && (
-              <ChevronRight size={10} className="text-zinc-700 shrink-0" />
+              <ChevronRight size={10} className="text-slate-400 dark:text-zinc-700 shrink-0" />
             )}
           </div>
         );
@@ -93,24 +93,24 @@ function EventRow({ emp, onSelect }) {
   return (
     <div
       onClick={() => onSelect && onSelect(emp)}
-      className="border-b border-zinc-800/80 py-3 px-1.5 last:border-b-0 hover:bg-zinc-800/30 rounded transition-colors cursor-pointer"
+      className="border-b border-app-border py-3 px-2 last:border-b-0 hover:bg-slate-50 dark:hover:bg-zinc-800/40 rounded transition-colors cursor-pointer"
     >
       <div className="flex items-start gap-3">
-        <div className="w-10 h-10 rounded-md bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-mono text-zinc-300 shrink-0 font-semibold">
+        <div className="w-10 h-10 rounded-md bg-slate-100 dark:bg-zinc-800 border border-app-border flex items-center justify-center text-xs font-mono text-slate-800 dark:text-zinc-300 shrink-0 font-bold">
           {initials(name)}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-zinc-100 text-sm font-medium">{name}</span>
-            <span className="text-zinc-500 text-xs font-mono">{code}</span>
+            <span className="text-app-text text-sm font-semibold">{name}</span>
+            <span className="text-app-text-muted text-xs font-mono font-medium">{code}</span>
             <span
-              className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${s.ring} ${s.bg} ${s.text}`}
+              className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded border ${s.ring} ${s.bg} ${s.text}`}
             >
               {s.label.toUpperCase()}
             </span>
           </div>
 
-          <div className="text-xs text-zinc-500 font-mono mt-0.5">
+          <div className="text-xs text-app-text-muted font-mono mt-0.5">
             {section} &bull; {shift} &bull; {time}
           </div>
 
@@ -120,8 +120,8 @@ function EventRow({ emp, onSelect }) {
 
           <div className="flex items-center justify-between mt-2 text-[11px] font-mono">
             <span
-              className={`flex items-center gap-1 ${
-                breach ? 'text-red-400' : 'text-emerald-400'
+              className={`flex items-center gap-1 font-semibold ${
+                breach ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'
               }`}
             >
               <MapPin size={11} />
@@ -129,8 +129,8 @@ function EventRow({ emp, onSelect }) {
                 ? `${breachMeters}m outside geofence`
                 : `Inside HQ perimeter (${accuracy}m)`}
             </span>
-            <span className="text-zinc-500 hidden sm:inline">Liveness: {liveness}% match</span>
-            <span className="text-sky-400 hover:text-sky-300 text-[11px]">Details &amp; drawers</span>
+            <span className="text-app-text-muted hidden sm:inline">Liveness: {liveness}% match</span>
+            <span className="text-sky-600 dark:text-sky-400 font-medium hover:underline text-[11px]">Details &amp; dossier &rarr;</span>
           </div>
         </div>
       </div>
@@ -146,20 +146,20 @@ export default function EventStream({
   totalCount = 705,
 }) {
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
-      <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-        <span className="text-sm font-medium text-zinc-200">
-          Attendance event stream and roster
+    <div className="bg-app-surface border border-app-border rounded-xl p-5 shadow-sm">
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+        <span className="text-sm font-semibold text-app-text">
+          Attendance Event Stream &amp; Roster
         </span>
         <div className="flex items-center gap-1.5 flex-wrap">
           {FILTERS.map((f) => (
             <button
               key={f.key}
               onClick={() => onFilterChange(f.key)}
-              className={`text-[10px] font-mono px-2 py-1 rounded border transition-colors ${
+              className={`text-[10px] font-mono font-medium px-2.5 py-1 rounded-md border transition-colors ${
                 filter === f.key
-                  ? 'bg-sky-600 border-sky-500 text-white'
-                  : 'border-zinc-700 text-zinc-400 hover:bg-zinc-800'
+                  ? 'bg-sky-600 border-sky-600 text-white shadow-xs'
+                  : 'border-app-border bg-app-surface text-app-text-muted hover:text-app-text hover:bg-slate-100 dark:hover:bg-zinc-800'
               }`}
             >
               {f.label}
@@ -168,9 +168,9 @@ export default function EventStream({
         </div>
       </div>
 
-      <div className="max-h-[520px] overflow-y-auto pr-1 divide-y divide-zinc-800/40">
+      <div className="max-h-[520px] overflow-y-auto pr-1 divide-y divide-app-border">
         {records.length === 0 ? (
-          <div className="text-zinc-600 text-sm text-center py-12 font-mono">
+          <div className="text-app-text-muted text-sm text-center py-12 font-mono">
             No records match this filter
           </div>
         ) : (
@@ -180,16 +180,16 @@ export default function EventStream({
         )}
       </div>
 
-      <div className="flex items-center justify-between mt-3 text-[11px] font-mono text-zinc-500 pt-2 border-t border-zinc-800">
+      <div className="flex items-center justify-between mt-3 text-[11px] font-mono text-app-text-muted pt-3 border-t border-app-border">
         <span>
           Showing {records.length} of {totalCount.toLocaleString()} personnel
         </span>
         <div className="flex items-center gap-2">
-          <button className="border border-zinc-700 rounded px-2 py-1 hover:bg-zinc-800 transition-colors">
+          <button className="border border-app-border rounded px-2 py-1 hover:bg-slate-100 dark:hover:bg-zinc-800 text-app-text transition-colors">
             Prev
           </button>
-          <span>Page 01</span>
-          <button className="border border-zinc-700 rounded px-2 py-1 hover:bg-zinc-800 transition-colors">
+          <span className="font-semibold text-app-text">Page 01</span>
+          <button className="border border-app-border rounded px-2 py-1 hover:bg-slate-100 dark:hover:bg-zinc-800 text-app-text transition-colors">
             Next
           </button>
         </div>

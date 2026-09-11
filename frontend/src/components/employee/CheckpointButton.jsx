@@ -31,10 +31,10 @@ export default function CheckpointButton({
 
   if (!nextCheckpoint) {
     return (
-      <div className="bg-zinc-900 border border-emerald-500/30 rounded-xl p-6 text-center">
-        <ShieldCheck size={36} className="mx-auto text-emerald-400 mb-2" />
-        <h3 className="text-zinc-100 font-medium text-sm">Shift Complete</h3>
-        <p className="text-xs text-zinc-500 font-mono mt-1">
+      <div className="bg-app-surface border border-emerald-500/40 rounded-2xl p-7 text-center shadow-sm">
+        <ShieldCheck size={40} className="mx-auto text-emerald-600 dark:text-emerald-400 mb-2" />
+        <h3 className="text-app-text font-bold text-base">Shift Complete</h3>
+        <p className="text-xs text-app-text-muted font-mono mt-1">
           All sequential checkpoints for this shift have been verified.
         </p>
       </div>
@@ -43,17 +43,17 @@ export default function CheckpointButton({
 
   return (
     <>
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 text-center space-y-4 shadow-xl">
-        <div className="inline-flex items-center gap-1.5 text-xs font-mono px-2.5 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400">
+      <div className="bg-app-surface border border-app-border rounded-2xl p-7 text-center space-y-5 shadow-sm">
+        <div className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold px-3 py-1 rounded-full bg-sky-50 text-sky-700 dark:bg-sky-500/10 dark:text-sky-400 border border-sky-200 dark:border-sky-500/30">
           <span>STEP {nextCheckpoint.sequenceOrder} IN SEQUENCE</span>
         </div>
 
         <div>
-          <h2 className="text-2xl font-semibold text-zinc-100 font-mono">
+          <h2 className="text-2xl font-bold text-app-text font-mono tracking-tight">
             {nextCheckpoint.name}
           </h2>
-          <p className="text-xs text-zinc-500 font-mono mt-1">
-            Expected: {nextCheckpoint.expectedTime || 'Current Window'} &bull; Photo &amp; GPS Required
+          <p className="text-xs text-app-text-muted font-mono mt-1 font-medium">
+            Expected: {nextCheckpoint.expectedTime || 'Current Window'} &bull; Photo &amp; GPS Telemetry Required
           </p>
         </div>
 
@@ -61,10 +61,10 @@ export default function CheckpointButton({
         <button
           onClick={handleClick}
           disabled={isSubmitting}
-          className={`w-full max-w-sm mx-auto py-4 px-6 rounded-xl font-mono text-sm font-semibold flex items-center justify-center gap-3 transition-all transform active:scale-95 shadow-lg ${
+          className={`w-full max-w-sm mx-auto py-4 px-6 rounded-xl font-mono text-sm font-bold flex items-center justify-center gap-3 transition-all transform active:scale-95 shadow-md ${
             isOutsideGeofence
-              ? 'bg-red-600/80 hover:bg-red-600 text-white shadow-red-600/20'
-              : 'bg-sky-600 hover:bg-sky-500 text-white shadow-sky-600/25'
+              ? 'bg-rose-600 hover:bg-rose-700 text-white shadow-rose-600/20'
+              : 'bg-sky-600 hover:bg-sky-700 text-white shadow-sky-600/25'
           } disabled:opacity-50`}
         >
           {isSubmitting ? (
@@ -85,9 +85,9 @@ export default function CheckpointButton({
           )}
         </button>
 
-        <div className="flex items-center justify-center gap-4 text-[11px] font-mono text-zinc-500 pt-2 border-t border-zinc-800/60">
-          <span className="flex items-center gap-1">
-            <MapPin size={12} className={isOutsideGeofence ? 'text-red-400' : 'text-emerald-400'} />
+        <div className="flex items-center justify-center gap-4 text-[11px] font-mono text-app-text-muted pt-3 border-t border-app-border">
+          <span className="flex items-center gap-1 font-medium">
+            <MapPin size={12} className={isOutsideGeofence ? 'text-rose-600' : 'text-emerald-600 dark:text-emerald-400'} />
             {isOutsideGeofence
               ? `Outside Office Perimeter (${breachMeters}m)`
               : `Within ${nearestZone || 'HQ'} Perimeter`}
@@ -99,7 +99,7 @@ export default function CheckpointButton({
 
       {/* Camera Capture Modal */}
       {showCamera && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4">
           <CameraCapture
             onCapture={handlePhotoCaptured}
             onCancel={() => setShowCamera(false)}
@@ -109,23 +109,23 @@ export default function CheckpointButton({
 
       {/* Geofence Breach Modal Alert */}
       {showBreachAlert && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-zinc-900 border border-red-500/50 rounded-xl p-6 max-w-sm text-center shadow-2xl space-y-4">
-            <div className="w-12 h-12 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center mx-auto">
+        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-app-surface border border-rose-400 rounded-2xl p-6 max-w-sm text-center shadow-2xl space-y-4">
+            <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400 flex items-center justify-center mx-auto">
               <AlertOctagon size={28} />
             </div>
             <div>
-              <h3 className="text-zinc-100 font-semibold text-base">
+              <h3 className="text-app-text font-bold text-base">
                 Outside Office Location
               </h3>
-              <p className="text-xs text-zinc-400 font-mono mt-2">
+              <p className="text-xs text-app-text-muted font-mono mt-2 leading-relaxed">
                 Your device GPS is {breachMeters} meters outside the authorized office geofence.
                 Checkpoint submission is blocked until you are within the perimeter.
               </p>
             </div>
             <button
               onClick={() => setShowBreachAlert(false)}
-              className="w-full py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-mono rounded"
+              className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-app-text text-xs font-mono font-bold rounded-lg transition-colors"
             >
               Acknowledge &amp; Return
             </button>

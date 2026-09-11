@@ -4,19 +4,19 @@ export default function StatCard({
   icon: Icon,
   label,
   value,
-  valueColor = 'text-zinc-100',
+  valueColor = 'text-app-text',
   sub,
-  subColor = 'text-zinc-500',
+  subColor = 'text-app-muted',
   sub2,
-  sub2Color = 'text-zinc-500',
+  sub2Color = 'text-app-muted',
 }) {
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4 flex flex-col gap-2 min-w-0 shadow-sm hover:border-zinc-700 transition-colors">
-      <div className="flex items-center justify-between text-zinc-500">
-        <span className="text-[11px] tracking-wide uppercase font-mono">{label}</span>
-        <Icon size={14} className="text-zinc-400" />
+    <div className="bg-app-surface border border-app-border rounded-xl p-4 flex flex-col gap-2 min-w-0 shadow-xs hover:border-blue-400/40 transition-all">
+      <div className="flex items-center justify-between text-app-muted">
+        <span className="text-[11px] tracking-wide uppercase font-mono font-semibold">{label}</span>
+        <Icon size={15} className="text-blue-600" />
       </div>
-      <div className={`text-3xl font-semibold font-mono tracking-tight ${valueColor}`}>
+      <div className={`text-2xl font-bold font-mono tracking-tight ${valueColor}`}>
         {value}
       </div>
       <div className="flex items-center justify-between text-[11px] font-mono">

@@ -37,6 +37,7 @@ import LiveEventFlash from '../components/dashboard/LiveEventFlash';
 import EventStream from '../components/dashboard/EventStream';
 import GeofenceRadar from '../components/dashboard/GeofenceRadar';
 import LockoutTable from '../components/dashboard/LockoutTable';
+import LocationMappingView from '../components/dashboard/LocationMappingView';
 import OpsLayout from '../components/layout/OpsLayout';
 
 export default function AdminLiveMonitor() {
@@ -56,6 +57,7 @@ export default function AdminLiveMonitor() {
   } = useAttendanceStore();
 
   const [selectedSection, setSelectedSection] = useState(user?.sectionId || 'ALL');
+  const [activeViewMode, setActiveViewMode] = useState('stream'); // 'stream' | 'map'
 
   useEffect(() => {
     fetchDashboardData(selectedSection === 'ALL' ? null : selectedSection);
@@ -97,53 +99,53 @@ export default function AdminLiveMonitor() {
             icon={ClipboardList}
             label="Total workforce"
             value={aggregates.totalWorkforce?.toLocaleString() || '705'}
-            valueColor="text-zinc-100"
+            valueColor="text-slate-900"
             sub="Active, registered"
-            subColor="text-zinc-500"
+            subColor="text-slate-500"
           />
           <StatCard
             icon={CheckCircle2}
             label="On-site verified"
             value={aggregates.onSiteVerified?.toLocaleString() || '694'}
-            valueColor="text-emerald-400"
+            valueColor="text-emerald-600"
             sub="Inside geofence"
-            subColor="text-zinc-500"
+            subColor="text-slate-500"
             sub2="98.4%"
-            sub2Color="text-emerald-400"
+            sub2Color="text-emerald-600"
           />
           <StatCard
             icon={Flag}
             label="Late flagged"
             value={aggregates.lateFlagged ?? 11}
-            valueColor="text-amber-400"
+            valueColor="text-amber-600"
             sub=">15m threshold"
-            subColor="text-zinc-500"
+            subColor="text-slate-500"
             sub2="avg +18m"
-            sub2Color="text-amber-400"
+            sub2Color="text-amber-600"
           />
           <StatCard
             icon={Coffee}
             label="Break / lunch"
             value={aggregates.onBreak ?? 24}
-            valueColor="text-sky-400"
+            valueColor="text-blue-600"
             sub="Lunch + tea active"
-            subColor="text-zinc-500"
+            subColor="text-slate-500"
           />
           <StatCard
             icon={XCircle}
             label="Geofence breach"
             value={aggregates.geofenceBreach ?? 1}
-            valueColor="text-red-400"
+            valueColor="text-red-600"
             sub="Outside perimeter"
-            subColor="text-zinc-500"
+            subColor="text-slate-500"
           />
           <StatCard
             icon={KeyRound}
             label="Auth lockouts"
             value={aggregates.authLockouts ?? lockouts.length}
-            valueColor="text-zinc-100"
+            valueColor="text-slate-900"
             sub="3x failed credentials"
-            subColor="text-zinc-500"
+            subColor="text-slate-500"
           />
         </div>
 
@@ -154,27 +156,63 @@ export default function AdminLiveMonitor() {
           onPageComm={handlePageComm}
         />
 
-        {/* Row 3: Event Stream + Geofence Radar & Lockout Table */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {/* Left 2 Cols: Live Event Stream and Roster */}
-          <div className="lg:col-span-2">
-            <EventStream
-              records={filteredRecords}
-              filter={activeFilter}
-              onFilterChange={setFilter}
-              totalCount={aggregates.totalWorkforce || 705}
-            />
+        {/* View Switcher: Live Event Stream vs GPS Location Mapping */}
+        <div className="flex items-center justify-between p-2 rounded-xl bg-app-surface border border-app-border shadow-xs">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setActiveViewMode('stream')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-colors ${
+                activeViewMode === 'stream'
+                  ? 'bg-blue-600 text-white shadow-xs'
+                  : 'text-app-muted hover:text-app-text hover:bg-app-bg'
+              }`}
+            >
+              <Radio size={14} />
+              <span>Telemetry Event Stream</span>
+            </button>
+            <button
+              onClick={() => setActiveViewMode('map')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-colors ${
+                activeViewMode === 'map'
+                  ? 'bg-blue-600 text-white shadow-xs'
+                  : 'text-app-muted hover:text-app-text hover:bg-app-bg'
+              }`}
+            >
+              <Compass size={14} />
+              <span>GPS Location Mapping Matrix</span>
+            </button>
           </div>
 
-          {/* Right 1 Col: Radar + Lockout Table */}
-          <div className="space-y-4">
-            <GeofenceRadar employees={records} />
-            <LockoutTable lockouts={lockouts} onUnlock={handleUnlockUser} />
-          </div>
+          <span className="text-[11px] font-mono text-app-muted hidden sm:inline">
+            Active Scope: <span className="font-bold text-blue-600">{selectedSection}</span>
+          </span>
         </div>
 
+        {/* Row 3: Mode 1: Event Stream + Radar, OR Mode 2: Full Location Mapping View */}
+        {activeViewMode === 'map' ? (
+          <LocationMappingView records={records} />
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            {/* Left 2 Cols: Live Event Stream and Roster */}
+            <div className="lg:col-span-2">
+              <EventStream
+                records={filteredRecords}
+                filter={activeFilter}
+                onFilterChange={setFilter}
+                totalCount={aggregates.totalWorkforce || 705}
+              />
+            </div>
+
+            {/* Right 1 Col: Radar + Lockout Table */}
+            <div className="space-y-4">
+              <GeofenceRadar employees={records} />
+              <LockoutTable lockouts={lockouts} onUnlock={handleUnlockUser} />
+            </div>
+          </div>
+        )}
+
         {/* Operational Footer Telemetry */}
-        <div className="flex items-center gap-2 text-[11px] font-mono text-zinc-600 border-t border-zinc-800 pt-3">
+        <div className="flex items-center gap-2 text-[11px] font-mono text-app-muted border-t border-app-border pt-3">
           <Radio size={12} className="text-emerald-500 animate-pulse" />
           <span>Websocket event pump active</span>
           <span>&middot;</span>

@@ -52,13 +52,13 @@ export default function AuditTrailPage() {
   return (
     <OpsLayout onResync={loadData}>
       <div className="space-y-6">
-        <div className="flex items-center justify-between flex-wrap gap-4 pb-4 border-b border-zinc-800">
+        <div className="flex items-center justify-between flex-wrap gap-4 pb-4 border-b border-app-border">
           <div>
-            <h1 className="text-xl font-bold font-mono text-zinc-100 flex items-center gap-2">
-              <History size={20} className="text-sky-400" />
+            <h1 className="text-xl font-bold font-mono text-app-text flex items-center gap-2">
+              <History size={20} className="text-sky-600 dark:text-sky-400" />
               Security Audit Trail &amp; Folder Operations
             </h1>
-            <p className="text-xs text-zinc-500 font-mono mt-0.5">
+            <p className="text-xs text-app-text-muted font-mono mt-0.5">
               Permanent telemetry log of authentications, geofence breaches, 3-strike lockouts, and exceptions
             </p>
           </div>
@@ -66,30 +66,30 @@ export default function AuditTrailPage() {
           <div className="flex items-center gap-2 font-mono text-xs">
             <button
               onClick={() => setActiveTab('AUDIT')}
-              className={`px-3 py-1.5 rounded transition-colors ${
+              className={`px-3.5 py-1.5 rounded-lg font-medium transition-colors ${
                 activeTab === 'AUDIT'
-                  ? 'bg-sky-600 text-white font-medium'
-                  : 'bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-zinc-200'
+                  ? 'bg-sky-600 text-white shadow-xs'
+                  : 'bg-app-surface border border-app-border text-app-text-muted hover:text-app-text hover:bg-slate-100 dark:hover:bg-zinc-800'
               }`}
             >
               Audit Trail
             </button>
             <button
               onClick={() => setActiveTab('FOLDERS')}
-              className={`px-3 py-1.5 rounded transition-colors ${
+              className={`px-3.5 py-1.5 rounded-lg font-medium transition-colors ${
                 activeTab === 'FOLDERS'
-                  ? 'bg-sky-600 text-white font-medium'
-                  : 'bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-zinc-200'
+                  ? 'bg-sky-600 text-white shadow-xs'
+                  : 'bg-app-surface border border-app-border text-app-text-muted hover:text-app-text hover:bg-slate-100 dark:hover:bg-zinc-800'
               }`}
             >
               Folder Structure View
             </button>
             <button
               onClick={() => setActiveTab('ONBOARD')}
-              className={`px-3 py-1.5 rounded transition-colors ${
+              className={`px-3.5 py-1.5 rounded-lg font-medium transition-colors ${
                 activeTab === 'ONBOARD'
-                  ? 'bg-sky-600 text-white font-medium'
-                  : 'bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-zinc-200'
+                  ? 'bg-sky-600 text-white shadow-xs'
+                  : 'bg-app-surface border border-app-border text-app-text-muted hover:text-app-text hover:bg-slate-100 dark:hover:bg-zinc-800'
               }`}
             >
               + Onboard Personnel
@@ -99,22 +99,22 @@ export default function AuditTrailPage() {
 
         {/* Tab 1: Audit Trail */}
         {activeTab === 'AUDIT' && (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4 font-mono text-xs shadow-xl">
-            <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-800">
+          <div className="bg-app-surface border border-app-border rounded-xl p-5 space-y-4 font-mono text-xs shadow-sm">
+            <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-app-border">
               <div className="relative flex-1 max-w-sm">
-                <Search size={14} className="absolute left-3 top-2.5 text-zinc-500" />
+                <Search size={14} className="absolute left-3 top-2.5 text-app-text-muted" />
                 <input
                   type="text"
                   placeholder="Search actions, actors, or details..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded pl-9 pr-3 py-1.5 text-zinc-200 focus:outline-none focus:border-sky-500 text-xs"
+                  className="w-full bg-slate-50 dark:bg-zinc-950 border border-app-border rounded-lg pl-9 pr-3 py-1.5 text-app-text focus:outline-none focus:ring-1 focus:ring-sky-500 text-xs"
                 />
               </div>
 
               <button
                 onClick={loadData}
-                className="flex items-center gap-1.5 text-sky-400 hover:text-sky-300 text-xs"
+                className="flex items-center gap-1.5 text-sky-600 dark:text-sky-400 hover:underline text-xs font-semibold"
               >
                 <RefreshCw size={13} /> Refresh Log
               </button>
@@ -123,24 +123,24 @@ export default function AuditTrailPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-zinc-800 text-[10px] text-zinc-500 uppercase">
-                    <th className="py-2 px-3">Timestamp (UTC)</th>
-                    <th className="py-2 px-3">Action Event</th>
-                    <th className="py-2 px-3">Entity</th>
-                    <th className="py-2 px-3">Actor Role</th>
-                    <th className="py-2 px-3">Metadata / Details</th>
+                  <tr className="border-b border-app-border text-[10px] text-app-text-muted uppercase font-semibold">
+                    <th className="py-2.5 px-3">Timestamp (UTC)</th>
+                    <th className="py-2.5 px-3">Action Event</th>
+                    <th className="py-2.5 px-3">Entity</th>
+                    <th className="py-2.5 px-3">Actor Role</th>
+                    <th className="py-2.5 px-3">Metadata / Details</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-800/60 text-[11px]">
+                <tbody className="divide-y divide-app-border text-[11px]">
                   {loading ? (
                     <tr>
-                      <td colSpan={5} className="text-center py-8 text-zinc-500">
+                      <td colSpan={5} className="text-center py-8 text-app-text-muted">
                         Querying immutable audit logs...
                       </td>
                     </tr>
                   ) : filteredLogs.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="text-center py-8 text-zinc-600">
+                      <td colSpan={5} className="text-center py-8 text-app-text-muted">
                         No audit events match your search.
                       </td>
                     </tr>
@@ -150,26 +150,26 @@ export default function AuditTrailPage() {
                       const isException = log.action === 'EXCEPTION_APPROVED';
 
                       return (
-                        <tr key={log.id} className="hover:bg-zinc-800/30 transition-colors">
-                          <td className="py-2.5 px-3 text-zinc-400 whitespace-nowrap">
+                        <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-zinc-800/40 transition-colors">
+                          <td className="py-2.5 px-3 text-app-text-muted whitespace-nowrap font-medium">
                             {new Date(log.createdAt).toISOString().replace('T', ' ').slice(0, 19)}Z
                           </td>
                           <td className="py-2.5 px-3">
                             <span
-                              className={`px-1.5 py-0.5 rounded border text-[10px] ${
+                              className={`px-2 py-0.5 rounded border text-[10px] font-semibold ${
                                 isLockout
-                                  ? 'bg-red-500/15 border-red-500/40 text-red-400'
+                                  ? 'bg-rose-50 border-rose-300 text-rose-700 dark:bg-rose-500/15 dark:border-rose-500/40 dark:text-rose-400'
                                   : isException
-                                  ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400'
-                                  : 'bg-zinc-800 border-zinc-700 text-zinc-300'
+                                  ? 'bg-emerald-50 border-emerald-300 text-emerald-700 dark:bg-emerald-500/15 dark:border-emerald-500/40 dark:text-emerald-400'
+                                  : 'bg-slate-100 border-slate-200 text-slate-700 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-300'
                               }`}
                             >
                               {log.action}
                             </span>
                           </td>
-                          <td className="py-2.5 px-3 text-zinc-300">{log.entityType}</td>
-                          <td className="py-2.5 px-3 text-zinc-400">{log.actorRole}</td>
-                          <td className="py-2.5 px-3 text-zinc-500 max-w-xs truncate font-mono text-[10px]">
+                          <td className="py-2.5 px-3 text-app-text font-medium">{log.entityType}</td>
+                          <td className="py-2.5 px-3 text-app-text-muted">{log.actorRole}</td>
+                          <td className="py-2.5 px-3 text-app-text-muted max-w-xs truncate font-mono text-[10px]">
                             {log.details ? JSON.stringify(log.details) : '--'}
                           </td>
                         </tr>

@@ -9,8 +9,8 @@ export default function LiveEventFlash({ event, onApprove, onPageComm }) {
 
   if (!event) {
     return (
-      <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 text-center text-zinc-500 font-mono text-xs">
-        <ShieldCheck size={24} className="mx-auto mb-2 text-emerald-500/50" />
+      <div className="bg-app-surface border border-app-border rounded-xl p-6 text-center text-app-muted font-mono text-xs shadow-xs">
+        <ShieldCheck size={24} className="mx-auto mb-2 text-emerald-600" />
         ALL PERIMETERS SECURE &bull; NO ACTIVE EXCEPTIONS FLAGGED
       </div>
     );
@@ -38,33 +38,33 @@ export default function LiveEventFlash({ event, onApprove, onPageComm }) {
   };
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4 transition-all">
+    <div className="bg-app-surface border border-app-border rounded-xl p-4 transition-all shadow-xs">
       <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <span
             className={`w-2 h-2 rounded-full ${
-              isBreach ? 'bg-red-500 animate-ping' : isLate ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400'
+              isBreach ? 'bg-red-500 animate-ping' : isLate ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'
             }`}
           />
-          <span className="text-xs font-mono text-zinc-400 uppercase tracking-wide">
+          <span className="text-xs font-mono text-app-muted uppercase tracking-wide font-semibold">
             Live event photo flash &bull; Telemetry Feed
           </span>
         </div>
         <button
           onClick={() => setPinned(!pinned)}
-          className={`flex items-center gap-1.5 text-[11px] font-mono border rounded px-2 py-1 transition-colors ${
+          className={`flex items-center gap-1.5 text-[11px] font-mono border rounded-lg px-2.5 py-1 transition-colors ${
             pinned
-              ? 'border-sky-500/50 bg-sky-500/10 text-sky-400'
-              : 'border-zinc-700 text-zinc-400 hover:bg-zinc-800'
+              ? 'border-blue-500/50 bg-blue-50 text-blue-600 font-semibold'
+              : 'border-app-border text-app-muted hover:bg-app-bg'
           }`}
         >
-          <Pin size={12} className={pinned ? 'rotate-45' : ''} /> {pinned ? 'Pinned' : 'Pin record'}
+          <Pin size={12} className={pinned ? 'rotate-45 text-blue-600' : ''} /> {pinned ? 'Pinned' : 'Pin record'}
         </button>
       </div>
 
       <div className="flex flex-col md:flex-row gap-4">
         {/* Photo / Visual Verification Preview */}
-        <div className="relative w-24 h-24 rounded-md bg-zinc-950 border border-zinc-700 flex items-center justify-center text-lg font-mono text-zinc-300 shrink-0 overflow-hidden group">
+        <div className="relative w-24 h-24 rounded-xl bg-app-bg border border-app-border flex items-center justify-center text-lg font-mono text-app-text shrink-0 overflow-hidden shadow-xs group">
           {photoUrl && !photoUrl.includes('placeholder') ? (
             <img
               src={photoUrl}
@@ -76,11 +76,11 @@ export default function LiveEventFlash({ event, onApprove, onPageComm }) {
             />
           ) : (
             <div className="flex flex-col items-center justify-center">
-              <span className="text-base font-semibold">{initials(employeeName)}</span>
-              <span className="text-[9px] text-zinc-500 font-mono">CAM-SYNC</span>
+              <span className="text-base font-bold text-blue-600">{initials(employeeName)}</span>
+              <span className="text-[9px] text-app-muted font-mono">CAM-SYNC</span>
             </div>
           )}
-          <span className="absolute bottom-1 right-1 text-[8px] font-mono px-1 rounded bg-black/80 text-emerald-400 border border-emerald-500/30">
+          <span className="absolute bottom-1 right-1 text-[8px] font-mono px-1 rounded bg-slate-900/80 text-emerald-400 border border-emerald-500/30">
             {event.livenessScore ? `${event.livenessScore}%` : '98.4%'}
           </span>
         </div>
@@ -88,54 +88,54 @@ export default function LiveEventFlash({ event, onApprove, onPageComm }) {
         {/* Personnel & Event Details */}
         <div className="flex-1 min-w-0 space-y-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-zinc-100 font-medium text-sm">{employeeName}</span>
-            <span className="text-[11px] font-mono text-zinc-400">{employeeId}</span>
+            <span className="text-app-text font-bold text-sm">{employeeName}</span>
+            <span className="text-[11px] font-mono text-app-muted">{employeeId}</span>
             {isLate && (
-              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-amber-500/40 bg-amber-500/10 text-amber-400">
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-amber-300 bg-amber-50 text-amber-800 font-bold">
                 LATE BY 15 MINUTES
               </span>
             )}
             {isBreach && (
-              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-red-500/40 bg-red-500/10 text-red-400">
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-red-300 bg-red-50 text-red-800 font-bold">
                 GEOFENCE PERIMETER BREACH
               </span>
             )}
             {event.approvedException && (
-              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-emerald-500/40 bg-emerald-500/10 text-emerald-400">
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-emerald-300 bg-emerald-50 text-emerald-800 font-bold">
                 EXCEPTION APPROVED
               </span>
             )}
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] font-mono text-zinc-400 mt-1">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] font-mono text-app-muted mt-1">
             <div>
-              <span className="text-zinc-600 block text-[10px]">Flow / Squad</span>
-              <span className="truncate block">{sectionName}</span>
+              <span className="text-slate-400 block text-[10px] uppercase font-semibold">Flow / Squad</span>
+              <span className="truncate block font-semibold text-app-text">{sectionName}</span>
             </div>
             <div>
-              <span className="text-zinc-600 block text-[10px]">Assigned Shift</span>
-              <span className="truncate block">{shiftName}</span>
+              <span className="text-slate-400 block text-[10px] uppercase font-semibold">Assigned Shift</span>
+              <span className="truncate block font-semibold text-app-text">{shiftName}</span>
             </div>
             <div>
-              <span className="text-zinc-600 block text-[10px]">Event Trigger</span>
-              <span className="truncate block">
+              <span className="text-slate-400 block text-[10px] uppercase font-semibold">Event Trigger</span>
+              <span className="truncate block font-semibold text-app-text">
                 {event.checkpoint?.name || 'Sign In / First Face'}
               </span>
             </div>
             <div>
-              <span className="text-zinc-600 block text-[10px]">Stamp Delta</span>
-              <span className="truncate block">
+              <span className="text-slate-400 block text-[10px] uppercase font-semibold">Stamp Delta</span>
+              <span className="truncate block font-semibold text-app-text">
                 {isLate ? 'Sched 10:30 → Act 10:45' : 'On-Schedule'}
               </span>
             </div>
           </div>
 
-          <div className="text-[11px] font-mono flex items-center gap-1.5 pt-1.5 text-zinc-400">
+          <div className="text-[11px] font-mono flex items-center gap-1.5 pt-1.5 text-app-muted">
             <MapPin
               size={12}
-              className={isBreach ? 'text-red-400 shrink-0' : 'text-emerald-400 shrink-0'}
+              className={isBreach ? 'text-red-600 shrink-0' : 'text-emerald-600 shrink-0'}
             />
-            <span className={isBreach ? 'text-red-400' : 'text-emerald-400'}>
+            <span className={isBreach ? 'text-red-600 font-semibold' : 'text-emerald-700 font-semibold'}>
               {event.gpsLat?.toFixed(4) || '37.7749'}N, {event.gpsLng?.toFixed(4) || '-122.4194'}W
               &bull; {event.gpsAccuracy || '1.2'}m accuracy &bull;{' '}
               {isBreach
