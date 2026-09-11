@@ -627,7 +627,8 @@ export default function LiveTvPage() {
                         <div className="flex items-center gap-3">
                           <img
                             src={emp.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=dbeafe&color=1d4ed8`}
-                            alt={emp.name}
+                            alt=""
+                            aria-hidden="true"
                             className="w-9 h-9 rounded-full object-cover border border-blue-400/40 shrink-0 shadow-xs"
                             onError={(e) => {
                               e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=dbeafe&color=1d4ed8`;
