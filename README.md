@@ -1,138 +1,192 @@
 # AttendX — Photo-Verified, Geofenced Attendance Tracking System
 
-A production-ready, installable PWA for employee attendance tracking with photo verification and GPS geofencing.
+Production-ready employee attendance tracking system with photo-verified checkpoints, GPS geofencing, late-arrival detection, and a live dark telemetry ops monitoring dashboard.
 
-## Features
+---
 
-- **3 Roles**: Employee, Section Admin, Super Admin
-- **Photo Capture**: Camera-based photo verification at every checkpoint
-- **GPS Geofencing**: Configurable office location zones with radius validation
-- **Late Detection**: Automatic flagging based on shift start time + grace period
-- **Checkpoint Enforcement**: Sequential checkpoint completion (no skipping)
-- **Folder-Wise Dashboard**: Section → Employee → Date → Checkpoint hierarchy
-- **Security**: 3-attempt lockout, session timeout, back-button interception
-- **PWA**: Installable as a Progressive Web App
+## 1. Architecture Overview
 
-## Prerequisites
+- **Backend:** Node.js + Express 4.x, PostgreSQL via Prisma ORM, Socket.IO v4 real-time event streaming, JWT authentication, 3-strike security lockout middleware, Haversine GPS geofence engine.
+- **Frontend:** React 18 (Vite 6), Tailwind CSS v3, Zustand 5 state management, Socket.IO client, Lucide icons, installable PWA (Web Manifest + Service Worker).
+- **Storage:** S3-compatible abstraction layer with local storage fallback (`uploads/`).
 
-- **Node.js >= 22.5.0** (uses built-in `node:sqlite`)
-- No native compilation required (no Visual Studio needed)
+---
 
-## Quick Start
+## 2. Directory Structure
+
+```
+Employee_Attendance_Tracking_System/
+├── backend/
+│   ├── prisma/
+│   │   ├── schema.prisma             # PostgreSQL schema (8 models + enums)
+│   │   └── seed.js                   # Seed script (admins, shifts, 15 employees, records)
+│   ├── src/
+│   │   ├── index.js                  # App entrypoint, Express + Socket.IO bootstrap
+│   │   ├── config/
+│   │   │   ├── db.js                 # Prisma client instance
+│   │   │   └── env.js                # Environment config loader
+│   │   ├── models/                   # Domain model helpers
+│   │   │   ├── employee.model.js
+│   │   │   ├── section.model.js
+│   │   │   ├── shift.model.js
+│   │   │   ├── checkpoint.model.js
+│   │   │   ├── attendanceRecord.model.js
+│   │   │   ├── geofenceZone.model.js
+│   │   │   ├── loginAttempt.model.js
+│   │   │   └── adminUser.model.js
+│   │   ├── controllers/
+│   │   │   ├── auth.controller.js        # Universal login, logout, lockout check
+│   │   │   ├── employee.controller.js    # Add/edit/unlock/scope employees
+│   │   │   ├── checkpoint.controller.js  # Submit checkpoint (photo+gps+sequence)
+│   │   │   ├── attendance.controller.js  # Filter records, folder structure, approve
+│   │   │   ├── geofence.controller.js    # Zone CRUD + coordinate validator
+│   │   │   └── admin.controller.js       # Telemetry aggregates, lockouts, audit
+│   │   ├── routes/
+│   │   │   ├── auth.routes.js
+│   │   │   ├── employee.routes.js
+│   │   │   ├── attendance.routes.js
+│   │   │   ├── geofence.routes.js
+│   │   │   └── admin.routes.js
+│   │   ├── middleware/
+│   │   │   ├── authMiddleware.js         # JWT verification & session resolution
+│   │   │   ├── roleMiddleware.js         # Super Admin vs Section Admin scoping
+│   │   │   └── lockoutMiddleware.js      # 3-strike lockout policy enforcement
+│   │   ├── services/
+│   │   │   ├── lateDetection.service.js  # Shift start + grace period comparison
+│   │   │   ├── geofence.service.js       # Haversine distance vs allowable radius
+│   │   │   ├── photoStorage.service.js   # Multer + Base64 storage abstraction
+│   │   │   └── notification.service.js  # Telemetry & security alerts
+│   │   ├── sockets/
+│   │   │   └── liveEvents.socket.js      # Real-time WebSocket event broadcaster
+│   │   └── utils/
+│   │       ├── haversine.js              # Haversine distance math
+│   │       └── validators.js             # Input validation helpers
+│   ├── .env.example
+│   ├── .env
+│   ├── README.md
+│   └── package.json
+│
+├── frontend/
+│   ├── public/
+│   │   ├── favicon.svg
+│   │   ├── manifest.json             # PWA installable manifest
+│   │   └── service-worker.js         # Service worker offline cache
+│   ├── src/
+│   │   ├── main.jsx                  # React DOM root
+│   │   ├── App.jsx                   # React Router + back-button interceptor
+│   │   ├── index.css                 # Tailwind directives + dark telemetry theme
+│   │   ├── api/
+│   │   │   ├── client.js             # Axios client with JWT interceptors
+│   │   │   ├── auth.js               # Auth API calls
+│   │   │   └── attendance.js         # Telemetry & Checkpoint API calls
+│   │   ├── hooks/
+│   │   │   ├── useGeolocation.js     # Live device GPS watcher
+│   │   │   ├── useSocket.js          # Socket.IO live stream & ping tracker
+│   │   │   └── useAuth.js            # Authentication state hook
+│   │   ├── store/
+│   │   │   ├── authStore.js          # Zustand auth store
+│   │   │   └── attendanceStore.js    # Zustand live telemetry & records store
+│   │   ├── components/
+│   │   │   ├── layout/
+│   │   │   │   ├── Sidebar.jsx       # Navigation drawer
+│   │   │   │   └── TopNav.jsx        # Telemetry status bar (RTK latency, Zulu clock)
+│   │   │   ├── employee/
+│   │   │   │   ├── CheckpointButton.jsx # 1-Tap checkpoint action button
+│   │   │   │   ├── CameraCapture.jsx    # Webcam frame capture + liveness guide
+│   │   │   │   └── ShiftStatus.jsx      # Sequential steps progression
+│   │   │   ├── admin/
+│   │   │   │   ├── AddEmployeeForm.jsx  # Employee onboarding form
+│   │   │   │   └── SectionFolderTree.jsx# Section → Employee → Date → Checkpoints
+│   │   │   └── dashboard/
+│   │   │       ├── StatCard.jsx         # Telemetry counter card
+│   │   │       ├── LiveEventFlash.jsx   # Photo preview of flagged event + approve
+│   │   │       ├── EventStream.jsx      # Filterable live attendance roster
+│   │   │       ├── GeofenceRadar.jsx    # SVG perimeter radar with live blips
+│   │   │       └── LockoutTable.jsx     # Security lockout table with unlock buttons
+│   │   ├── pages/
+│   │   │   ├── LoginPage.jsx            # Multi-role authentication with 3-strike alert
+│   │   │   ├── EmployeeCheckInPage.jsx  # Checkpoint verification & submission flow
+│   │   │   ├── AdminLiveMonitor.jsx     # Main dark telemetry ops dashboard
+│   │   │   ├── GeofencingPage.jsx       # Perimeter manager + coordinate sandbox
+│   │   │   ├── ShiftEnginePage.jsx      # Daily shifts & checkpoint sequence editor
+│   │   │   └── AuditTrailPage.jsx       # Immutable audit logs & folder operations
+│   │   └── utils/
+│   │       └── time.js                  # Zulu time, AM/PM formatting, pad utils
+│   ├── tailwind.config.js
+│   ├── postcss.config.js
+│   ├── vite.config.js
+│   ├── index.html
+│   ├── README.md
+│   └── package.json
+└── README.md
+```
+
+---
+
+## 3. Quick Start Instructions
+
+### Prerequisites
+- **Node.js:** >= 20.0.0
+- **PostgreSQL:** Running locally or via Docker on port `5432`
+
+---
+
+### Step 1: Start Backend API & Database
 
 ```bash
+# Navigate to backend
+cd backend
+
 # Install dependencies
 npm install
 
-# Start the server
-npm start
+# Setup database schema with Prisma (Postgres)
+npx prisma db push
+
+# Seed initial admin users, shifts, geofence zones, 15 employees, and sample data
+node prisma/seed.js
+
+# Start backend server (starts on http://localhost:4000)
+npm run dev
 ```
 
-The server starts at **http://localhost:3000**
+---
 
-## Default Credentials
+### Step 2: Start Frontend Application
 
-| Role | Username | Password |
-|------|----------|----------|
-| Super Admin | `superadmin` | `admin123` |
-| Section Admin | `engadmin` | `section123` |
+In a new terminal:
 
-## Project Structure
+```bash
+# Navigate to frontend
+cd frontend
 
-```
-├── server/
-│   ├── index.js      # Express server with all API routes
-│   ├── db.js         # SQLite database (node:sqlite, auto-seeded)
-│   └── auth.js       # JWT auth, lockout, session management
-├── public/
-│   ├── index.html    # SPA entry point
-│   ├── manifest.json # PWA manifest
-│   ├── sw.js         # Service worker for offline support
-│   ├── css/app.css   # Application styles
-│   ├── js/app.js     # Frontend JavaScript
-│   └── icons/        # PWA icons
-├── data/             # SQLite DB + uploaded media (auto-created)
-├── package.json
-└── gen-icons.js      # Icon generator script
+# Install dependencies
+npm install
+
+# Start Vite development server
+npm run dev
 ```
 
-## API Endpoints
+Open your browser at **`http://localhost:5173`**.
 
-### Auth
-- `POST /api/auth/login` — Login with username/password
-- `GET /api/auth/me` — Get current user info
+---
 
-### Sections
-- `GET /api/sections` — List sections
-- `POST /api/sections` — Create section (admin+)
-- `PUT /api/sections/:id` — Update section
-- `DELETE /api/sections/:id` — Delete section (super admin)
+## 4. Default Credentials & Test Scenarios
 
-### Shifts
-- `GET /api/shifts` — List shifts
-- `POST /api/shifts` — Create shift with default checkpoints (super admin)
-- `PUT /api/shifts/:id` — Update shift
-- `DELETE /api/shifts/:id` — Delete shift
+| Role | Identifier / User | Password | Accessible Views |
+|---|---|---|---|
+| **Super Admin** | `superadmin` | `admin123` | Universal Ops Dashboard across all 6 sections, Geofencing, Shifts, Audit logs, Unlock any account |
+| **Section Admin (Avionics)** | `engadmin` | `section123` | Scoped to Sec-A / Flow-1 personnel and records |
+| **Employee (Marcus Chen)** | `EMP-9000` | `employee123` | Checkpoint verification flow, camera snapshot, GPS geofence validation |
+| **Locked Account (Owen Brennan)** | `EMP-10644` | `employee123` | Locked by 3-strike policy (triggers lockout alert on login) |
 
-### Checkpoints
-- `GET /api/checkpoints/:shiftId` — List checkpoints for a shift
-- `POST /api/checkpoints` — Add custom checkpoint (super admin)
+---
 
-### Employees
-- `GET /api/employees` — List employees (section-scoped for section admin)
-- `POST /api/employees` — Add employee with photo upload
-- `PUT /api/employees/:id` — Edit employee
-- `PUT /api/employees/:id/photo` — Update employee photo
-- `POST /api/employees/:id/unlock` — Unlock locked account
+## 5. Key System Behaviors Verified
 
-### Geofences
-- `GET /api/geofences` — List active geofence zones
-- `POST /api/geofences` — Create geofence zone (super admin)
-- `PUT /api/geofences/:id` — Update zone
-- `DELETE /api/geofences/:id` — Delete zone
-
-### Attendance
-- `POST /api/attendance/checkpoint` — Submit checkpoint (photo + GPS)
-- `GET /api/attendance` — Query attendance records
-- `GET /api/attendance/folder` — Folder-wise attendance view
-- `GET /api/attendance/my` — Today's records for logged-in employee
-
-### Settings & Audit
-- `GET /api/settings` — Get system settings
-- `PUT /api/settings` — Update settings
-- `GET /api/audit` — Audit log (super admin)
-- `GET /api/geofence-rejections` — Rejection log
-
-## Data Model
-
-- **sections** — Company sections (Engineering, Operations, etc.)
-- **shifts** — Work shifts with start/end times and grace periods
-- **checkpoints** — Sequential checkpoints per shift (Sign In, Lunch, Tea, Sign Out, Custom)
-- **employees** — Employee profiles with photos and credentials
-- **admin_users** — Admin accounts (section_admin, super_admin)
-- **attendance_records** — Photo-verified attendance entries with GPS
-- **geofence_zones** — Configurable office location zones
-- **geofence_rejections** — Log of failed geofence checks
-- **login_attempts** — Login attempt history
-- **audit_log** — System audit trail
-- **settings** — Configurable system settings
-
-## Configuration
-
-Environment variables (optional, via `.env`):
-
-```
-PORT=3000
-JWT_SECRET=your-secret-key
-SESSION_TIMEOUT=15
-```
-
-## PWA Installation
-
-1. Open http://localhost:3000 in a mobile browser
-2. Tap "Add to Home Screen" when prompted
-3. Or use the browser's install prompt
-
-## License
-
-MIT
+1. **Mandatory Photo Verification:** Checkpoint submissions require an image file or base64 webcam capture.
+2. **GPS Geofencing:** Device coordinates are measured against active office perimeters via the Haversine formula. Submissions outside perimeter radius are rejected with exact breach meters logged.
+3. **Late-Arrival Detection:** For Sign In checkpoints, `actualTime > shiftStart + gracePeriod (15m)` flags the record as `LATE` and triggers telemetry photo flash on admin dashboards.
+4. **Sequence Enforcement:** Checkpoint sequence order is strictly enforced per shift (e.g. Sign In -> Lunch Out -> Lunch In -> Tea Out -> Tea In -> Sign Out). Skipping ahead is blocked.
+5. **3-Strike Lockout Policy:** 3 consecutive failed login attempts immediately lock the account (`status = LOCKED`), broadcast a real-time security alert, and require a Section Admin or Super Admin to unlock.
+6. **Real-Time Telemetry Streaming:** Socket.IO broadcasts every new checkpoint record, lockout event, and breach alert directly to connected admin dashboards.

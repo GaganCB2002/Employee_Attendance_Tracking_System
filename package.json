@@ -2,12 +2,15 @@
   "name": "attendx-aero-ops",
   "version": "2.0.0",
   "description": "AttendX Aero-Ops Telemetry — Photo-Verified, Geofenced Attendance Tracking System",
-  "main": "backend/server.js",
+  "main": "backend/src/index.js",
   "scripts": {
-    "start": "node backend/server.js",
-    "dev": "node backend/server.js",
-    "icons": "node gen-icons.js",
-    "reseed": "node -e \"const fs=require('fs');const p=require('path');try{['attendx.db','attendx.db-shm','attendx.db-wal'].forEach(f=>fs.rmSync(p.join(__dirname,'database',f),{force:true}));console.log('Database cleared')}catch(e){console.log(e.message)}\""
+    "start": "node backend/src/index.js",
+    "dev": "node backend/src/index.js",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "build:frontend": "npm run build --prefix frontend",
+    "setup:db": "node database/init.js",
+    "test:security": "npm run test:security --prefix backend"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

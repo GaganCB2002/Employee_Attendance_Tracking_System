@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-color: #2563eb;
+  --secondary-color: #60a5fa;
+  --accent-color: #38bdf8;
+  --background-color: #0b1329;
+  --surface-color: #152140;
+  --sidebar-color: #090f20;
+  --header-color: #0b1329;
+  --text-color: #f8fafc;
+  --muted-text-color: #94a3b8;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --danger-color: #ef4444;
+  --info-color: #3b82f6;
+  --border-color: #1e293b;
+}
+
+@layer base {
+  body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    min-height: 100vh;
+  }
+}
+
+/* Centralized theme class helpers */
+.bg-app-bg { background-color: var(--background-color) !important; }
+.bg-app-surface { background-color: var(--surface-color) !important; }
+.bg-app-sidebar { background-color: var(--sidebar-color) !important; }
+.bg-app-header { background-color: var(--header-color) !important; }
+.text-app-text { color: var(--text-color) !important; }
+.text-app-muted { color: var(--muted-text-color) !important; }
+.text-app-primary { color: var(--primary-color) !important; }
+.border-app-border { border-color: var(--border-color) !important; }
+
+/* Custom telemetry scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background-color);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-text-color);
+}
+
+/* Pulse radar effect */
+@keyframes radar-sweep {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-radar {
+  animation: radar-sweep 4s linear infinite;
+  transform-origin: center center;
+}

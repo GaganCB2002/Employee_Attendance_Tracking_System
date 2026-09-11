@@ -1,0 +1,313 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  SECTION_ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  LOCKED
+  INACTIVE
+}
+
+enum CheckpointType {
+  SIGN_IN
+  LUNCH_OUT
+  LUNCH_IN
+  TEA_OUT
+  TEA_IN
+  SIGN_OUT
+  CUSTOM
+}
+
+enum AttendanceStatus {
+  ON_TIME
+  LATE
+  BREACH
+  BREAK
+}
+
+enum GeofenceValidation {
+  INSIDE
+  OUTSIDE
+}
+
+enum ActivityEventType {
+  LOGIN
+  LOGOUT
+  ACTIVE
+  IDLE
+  LONG_IDLE
+  BREAK_START
+  BREAK_END
+  CALL_START
+  CALL_END
+  MEETING_START
+  MEETING_END
+  AWAY
+  RETURN
+}
+
+model Department {
+  id          String     @id @default(uuid())
+  name        String     @unique // e.g. "IT", "HR", "Finance", "Operations", "Sales", "Management", "Production"
+  code        String     @unique // e.g. "DEPT-IT"
+  description String?
+  managerName String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  employees   Employee[]
+}
+
+model Floor {
+  id          String     @id @default(uuid())
+  name        String     @unique // e.g. "Ground Floor", "1st Floor", "2nd Floor", "3rd Floor", "4th Floor", "5th Floor"
+  code        String     @unique // e.g. "FL-01"
+  level       Int        @default(1)
+  description String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  employees   Employee[]
+}
+
+model Section {
+  id          String         @id @default(uuid())
+  name        String
+  code        String         @unique
+  description String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  adminUsers  AdminUser[]
+  employees   Employee[]
+  shifts      Shift[]
+  geofences   GeofenceZone[]
+}
+
+model Shift {
+  id                 String       @id @default(uuid())
+  name               String
+  startTime          String       // e.g. "06:00" or "09:00" (24-hr format)
+  endTime            String       // e.g. "14:30" or "18:00"
+  gracePeriodMinutes Int          @default(15)
+  sectionId          String?
+  section            Section?     @relation(fields: [sectionId], references: [id], onDelete: SetNull)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  employees          Employee[]
+  checkpoints        Checkpoint[]
+  attendanceRecords  AttendanceRecord[]
+}
+
+model Checkpoint {
+  id            String          @id @default(uuid())
+  shiftId       String
+  shift         Shift           @relation(fields: [shiftId], references: [id], onDelete: Cascade)
+  name          String          // "Sign In", "Lunch Out", "Lunch In", etc.
+  type          CheckpointType  @default(CUSTOM)
+  sequenceOrder Int             // 1, 2, 3, 4, 5, 6, 7, 8...
+  expectedTime  String?         // Expected time e.g. "10:30"
+  isMandatory   Boolean         @default(true)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  records       AttendanceRecord[]
+
+  @@unique([shiftId, sequenceOrder])
+}
+
+model Employee {
+  id             String             @id @default(uuid())
+  employeeCode   String             @unique // e.g. "EMP-90137"
+  name           String
+  email          String?            @unique
+  phone          String?
+  jobTitle       String?            // e.g. "Senior DevOps Engineer"
+  joiningDate    DateTime?          @default(now())
+  managerId      String?
+  managerName    String?
+  passwordHash   String
+  photoUrl       String?
+  status         UserStatus         @default(ACTIVE)
+  failedAttempts Int                @default(0)
+  lockedAt       DateTime?
+  lockReason     String?
+  
+  departmentId   String?
+  department     Department?        @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+
+  floorId        String?
+  floor          Floor?             @relation(fields: [floorId], references: [id], onDelete: SetNull)
+
+  sectionId      String
+  section        Section            @relation(fields: [sectionId], references: [id])
+  
+  shiftId        String
+  shift          Shift              @relation(fields: [shiftId], references: [id])
+
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  records            AttendanceRecord[]
+  activityEvents     ActivityEvent[]
+  attendanceSessions AttendanceSession[]
+}
+
+model AdminUser {
+  id             String     @id @default(uuid())
+  username       String     @unique // e.g. "superadmin", "engadmin"
+  passwordHash   String
+  name           String
+  role           Role       @default(SECTION_ADMIN)
+  status         UserStatus @default(ACTIVE)
+  failedAttempts Int        @default(0)
+  lockedAt       DateTime?
+
+  sectionId      String?
+  section        Section?   @relation(fields: [sectionId], references: [id], onDelete: SetNull)
+
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+}
+
+model GeofenceZone {
+  id           String    @id @default(uuid())
+  name         String    // e.g. "HQ-Alpha Main Campus"
+  code         String    @unique
+  latitude     Float     // e.g. 37.7749 or user location
+  longitude    Float     // e.g. -122.4194
+  radiusMeters Float     @default(50.0) // Real-world GPS safe radius
+  isActive     Boolean   @default(true)
+
+  sectionId    String?
+  section      Section?  @relation(fields: [sectionId], references: [id], onDelete: SetNull)
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model AttendanceRecord {
+  id                 String             @id @default(uuid())
+  employeeId         String
+  employee           Employee           @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  checkpointId       String
+  checkpoint         Checkpoint         @relation(fields: [checkpointId], references: [id], onDelete: Cascade)
+  shiftId            String
+  shift              Shift              @relation(fields: [shiftId], references: [id])
+  
+  date               String             // YYYY-MM-DD
+  actualTime         DateTime           @default(now())
+  status             AttendanceStatus   @default(ON_TIME)
+  photoUrl           String             // Tagged photo/clip path
+  gpsLat             Float
+  gpsLng             Float
+  gpsAccuracy        Float              // in meters, e.g. 1.2m
+  geofenceStatus     GeofenceValidation @default(INSIDE)
+  distanceToZone     Float              // meters away from geofence boundary or center
+  livenessScore      Float?             // e.g. 98.4%
+  notes              String?
+  approvedException  Boolean            @default(false)
+  approvedBy         String?
+  
+  createdAt          DateTime           @default(now())
+
+  @@index([employeeId, date])
+  @@index([shiftId, date])
+  @@index([status])
+}
+
+model ActivityEvent {
+  id              String            @id @default(uuid())
+  employeeId      String
+  employee        Employee          @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  eventType       ActivityEventType
+  startedAt       DateTime          @default(now())
+  endedAt         DateTime?
+  durationSeconds Int               @default(0)
+  metadata        Json?
+  createdAt       DateTime          @default(now())
+
+  @@index([employeeId, startedAt])
+  @@index([eventType])
+}
+
+model AttendanceSession {
+  id             String    @id @default(uuid())
+  employeeId     String
+  employee       Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  date           String    // YYYY-MM-DD
+  loginTime      DateTime  @default(now())
+  logoutTime     DateTime?
+  lastActivity   DateTime  @default(now())
+  status         String    @default("ACTIVE") // ACTIVE, IDLE, BREAK, CALL, MEETING, AWAY, OFFLINE
+  activeSeconds  Int       @default(0)
+  idleSeconds    Int       @default(0)
+  breakSeconds   Int       @default(0)
+  callSeconds    Int       @default(0)
+  meetingSeconds Int       @default(0)
+  isLate         Boolean   @default(false)
+  lateMinutes    Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([employeeId, date])
+}
+
+model SystemSetting {
+  id        String   @id @default(uuid())
+  key       String   @unique // e.g. "activity_rules", "theme_tokens", "live_tv_config"
+  value     Json
+  updatedBy String?
+  updatedAt DateTime @updatedAt
+}
+
+model LiveAlert {
+  id         String   @id @default(uuid())
+  employeeId String?
+  type       String   // "LONG_IDLE", "LONG_BREAK", "LATE_LOGIN", "OFFLINE", "CALL_EXCEEDED"
+  severity   String   @default("WARNING") // INFO, WARNING, CRITICAL
+  title      String
+  message    String
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([isRead, createdAt])
+}
+
+model LoginAttempt {
+  id            String   @id @default(uuid())
+  identifier    String   // username or employeeCode
+  userType      String   // "ADMIN" or "EMPLOYEE"
+  ipAddress     String?
+  userAgent     String?
+  success       Boolean
+  failureReason String?
+  createdAt     DateTime @default(now())
+
+  @@index([identifier, createdAt])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  action     String   // e.g. "LOGIN", "CHECKPOINT_SUBMIT", "ACCOUNT_LOCKED", "ACCOUNT_UNLOCKED", "EXCEPTION_APPROVED", "THEME_UPDATED", "RULES_UPDATED"
+  entityType String   // "Employee", "AdminUser", "AttendanceRecord", "GeofenceZone", "SystemSetting"
+  entityId   String?
+  actorId    String?
+  actorRole  String?
+  details    Json?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  @@index([action, createdAt])
+}
