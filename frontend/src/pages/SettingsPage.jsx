@@ -277,14 +277,14 @@ export default function SettingsPage() {
                 <button
                   type="button"
                   onClick={resetTheme}
-                  className="px-3 py-1.5 rounded-lg bg-zinc-800 text-zinc-300 hover:bg-zinc-700 text-xs flex items-center gap-1"
+                  className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 border border-app-border hover:bg-slate-200 text-xs flex items-center gap-1 font-semibold transition-colors"
                 >
                   <RotateCcw size={13} /> Reset
                 </button>
                 <button
                   type="button"
                   onClick={handleSaveTheme}
-                  className="px-3.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold flex items-center gap-1 shadow-md shadow-sky-600/20"
+                  className="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center gap-1 shadow-md shadow-blue-600/20 transition-colors"
                 >
                   <Save size={13} /> Save Project Theme
                 </button>
