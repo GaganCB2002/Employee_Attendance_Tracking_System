@@ -29,12 +29,14 @@ import {
   Menu,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { useUiStore } from '../store/uiStore';
 import OpsLayout from '../components/layout/OpsLayout';
 import Sidebar from '../components/layout/Sidebar';
 import EmployeeProfileModal from '../components/EmployeeProfileModal';
 
 export default function LiveTvPage() {
   const { token, user } = useAuth();
+  const { isCollapsed, toggleCollapse, mobileDrawerOpen, toggleMobileDrawer } = useUiStore();
 
   // Core data states
   const [data, setData] = useState(null);
@@ -48,9 +50,6 @@ export default function LiveTvPage() {
   const [isAutoRotating, setIsAutoRotating] = useState(false);
   const [rotationIntervalSeconds, setRotationIntervalSeconds] = useState(20);
   const [activeRotationScreen, setActiveRotationScreen] = useState(0); // 0: All, 1: Depts, 2: Floors, 3: Late/Alerts
-
-  // Left-Side 3-Line Menu Drawer State
-  const [sidebarDrawerOpen, setSidebarDrawerOpen] = useState(false);
 
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -188,8 +187,8 @@ export default function LiveTvPage() {
 
   const content = (
     <div className={`space-y-4 font-mono transition-all ${isTvMode ? 'p-6 bg-app-bg min-h-screen' : ''}`}>
-      {/* Drawer Sidebar for 3-Line Menu */}
-      <Sidebar isOpen={sidebarDrawerOpen} onClose={() => setSidebarDrawerOpen(false)} />
+      {/* If in TV Fullscreen mode, provide Sidebar drawer */}
+      {isTvMode && <Sidebar />}
 
       {/* ========================================================================= */}
       {/* 1. ENTERPRISE LIVE TV HEADER */}
@@ -199,9 +198,15 @@ export default function LiveTvPage() {
         <div className="flex items-center gap-3">
           {/* 3-Line Hamburger Menu Button */}
           <button
-            onClick={() => setSidebarDrawerOpen(!sidebarDrawerOpen)}
-            className="p-2.5 rounded-lg border border-app-border bg-slate-50 dark:bg-zinc-800 text-app-text hover:bg-slate-100 dark:hover:bg-zinc-700 transition-colors shadow-xs flex items-center justify-center shrink-0 group"
-            title="Toggle Navigation Menu (3 Lines)"
+            onClick={() => {
+              if (typeof window !== 'undefined' && window.innerWidth < 768) {
+                toggleMobileDrawer();
+              } else {
+                toggleCollapse();
+              }
+            }}
+            className="p-2.5 rounded-lg border border-app-border bg-slate-50 dark:bg-zinc-800 text-app-text hover:bg-slate-100 dark:hover:bg-zinc-700 transition-colors shadow-xs flex items-center justify-center shrink-0 group cursor-pointer"
+            title={isCollapsed ? 'Expand Navigation (Open Text)' : 'Collapse Navigation (Logo Only)'}
             aria-label="Toggle Navigation Menu"
           >
             <Menu size={20} className="group-hover:text-blue-600 transition-colors" />

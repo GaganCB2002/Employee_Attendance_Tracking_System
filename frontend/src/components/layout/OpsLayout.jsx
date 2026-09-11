@@ -3,10 +3,11 @@ import { Menu, X, Wifi, Clock, AlertTriangle, Shield, RefreshCw } from 'lucide-r
 import Sidebar from './Sidebar';
 import { useSocket } from '../../hooks/useSocket';
 import { useAuth } from '../../hooks/useAuth';
+import { useUiStore } from '../../store/uiStore';
 import { zulu } from '../../utils/time';
 
 export default function OpsLayout({ children, selectedSection, onSectionChange, onResync }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { isCollapsed, toggleCollapse, mobileDrawerOpen, setMobileDrawerOpen, toggleMobileDrawer } = useUiStore();
   const [now, setNow] = useState(new Date());
   const { latencyMs } = useSocket();
   const { user, isSuperAdmin } = useAuth();
@@ -16,27 +17,32 @@ export default function OpsLayout({ children, selectedSection, onSectionChange, 
     return () => clearInterval(timer);
   }, []);
 
+  const handleToggleMenu = () => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      toggleMobileDrawer();
+    } else {
+      toggleCollapse();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-app-bg text-app-text font-sans flex transition-colors duration-200">
       {/* Persistent Left-Side Navigation Bar */}
-      <Sidebar
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-      />
+      <Sidebar />
 
       {/* Main Operations Area */}
-      <div className={`flex-1 min-w-0 flex flex-col min-h-screen transition-all duration-200 ${sidebarOpen ? 'md:pl-64' : 'md:pl-64'}`}>
+      <div className={`flex-1 min-w-0 flex flex-col min-h-screen transition-all duration-300 ease-in-out ${isCollapsed ? 'md:pl-16' : 'md:pl-64'}`}>
         {/* Top Telemetry Header */}
         <header className="border-b border-app-border bg-app-header backdrop-blur-sm sticky top-0 z-30 select-none transition-colors duration-200 shadow-xs">
           <div className="flex items-center gap-3 px-4 py-2.5 overflow-x-auto">
             {/* 3-Line Hamburger Menu Toggle Button on Left Side */}
             <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-1.5 rounded-lg border border-app-border bg-app-surface text-app-text hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors flex items-center justify-center shadow-xs"
+              onClick={handleToggleMenu}
+              className="p-1.5 rounded-lg border border-app-border bg-app-surface text-app-text hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors flex items-center justify-center shadow-xs cursor-pointer group"
               aria-label="Toggle navigation menu (3 Lines)"
-              title="Toggle Navigation Menu (3 Lines)"
+              title={isCollapsed ? 'Expand Navigation (Open Text)' : 'Collapse Navigation (Logo Only)'}
             >
-              <Menu size={18} />
+              <Menu size={18} className="group-hover:text-blue-600 transition-colors" />
             </button>
 
             {/* Breadcrumb / Node Path */}
