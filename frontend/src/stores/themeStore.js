@@ -1,6 +1,23 @@
 import { create } from 'zustand';
 
 export const THEME_PRESETS = {
+  'Light Enterprise': {
+    mode: 'light',
+    primary: '#2563eb',
+    secondary: '#3b82f6',
+    accent: '#0284c7',
+    background: '#f8fafc',
+    surface: '#ffffff',
+    sidebar: '#ffffff',
+    header: '#ffffff',
+    text: '#0f172a',
+    mutedText: '#64748b',
+    success: '#16a34a',
+    warning: '#d97706',
+    danger: '#dc2626',
+    info: '#0284c7',
+    border: '#e2e8f0',
+  },
   'Dark Enterprise': {
     mode: 'dark',
     primary: '#0284c7',
@@ -117,9 +134,9 @@ function applyTokensToDocument(tokens) {
 }
 
 export const useThemeStore = create((set, get) => ({
-  preset: 'Professional Blue',
-  mode: 'dark',
-  tokens: THEME_PRESETS['Professional Blue'],
+  preset: 'Light Enterprise',
+  mode: 'light',
+  tokens: THEME_PRESETS['Light Enterprise'],
   isLoading: false,
 
   initTheme: async () => {
@@ -129,11 +146,11 @@ export const useThemeStore = create((set, get) => ({
       if (saved) {
         const parsed = JSON.parse(saved);
         set({
-          preset: parsed.preset || 'Professional Blue',
-          mode: parsed.mode || 'dark',
-          tokens: parsed.tokens || THEME_PRESETS['Professional Blue'],
+          preset: parsed.preset || 'Light Enterprise',
+          mode: parsed.mode || 'light',
+          tokens: parsed.tokens || THEME_PRESETS['Light Enterprise'],
         });
-        applyTokensToDocument(parsed.tokens || THEME_PRESETS['Professional Blue']);
+        applyTokensToDocument(parsed.tokens || THEME_PRESETS['Light Enterprise']);
         return;
       }
     } catch (e) {
@@ -141,7 +158,7 @@ export const useThemeStore = create((set, get) => ({
     }
 
     // Default fallback
-    applyTokensToDocument(THEME_PRESETS['Professional Blue']);
+    applyTokensToDocument(THEME_PRESETS['Light Enterprise']);
   },
 
   selectPreset: (presetName) => {
@@ -149,7 +166,7 @@ export const useThemeStore = create((set, get) => ({
     if (!presetTokens) return;
 
     const newTokens = { ...presetTokens };
-    set({ preset: presetName, tokens: newTokens, mode: presetTokens.mode || 'dark' });
+    set({ preset: presetName, tokens: newTokens, mode: presetTokens.mode || 'light' });
     applyTokensToDocument(newTokens);
     localStorage.setItem('attendx_theme', JSON.stringify({ preset: presetName, mode: presetTokens.mode, tokens: newTokens }));
   },
@@ -167,10 +184,10 @@ export const useThemeStore = create((set, get) => ({
   },
 
   resetTheme: () => {
-    const defaultTokens = THEME_PRESETS['Professional Blue'];
-    set({ preset: 'Professional Blue', mode: 'dark', tokens: defaultTokens });
+    const defaultTokens = THEME_PRESETS['Light Enterprise'];
+    set({ preset: 'Light Enterprise', mode: 'light', tokens: defaultTokens });
     applyTokensToDocument(defaultTokens);
-    localStorage.setItem('attendx_theme', JSON.stringify({ preset: 'Professional Blue', mode: 'dark', tokens: defaultTokens }));
+    localStorage.setItem('attendx_theme', JSON.stringify({ preset: 'Light Enterprise', mode: 'light', tokens: defaultTokens }));
   },
 
   saveToServer: async () => {

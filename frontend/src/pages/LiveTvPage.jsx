@@ -554,7 +554,7 @@ export default function LiveTvPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-app-border bg-zinc-900/60 text-[11px] uppercase tracking-wider text-app-muted">
+              <tr className="border-b border-app-border bg-app-bg text-[11px] uppercase tracking-wider text-app-muted font-bold">
                 <th className="py-3 px-4">Employee</th>
                 <th className="py-3 px-3">Employee ID</th>
                 <th className="py-3 px-3">Department</th>
@@ -625,7 +625,7 @@ export default function LiveTvPage() {
 
                       {/* Department */}
                       <td className="py-3 px-3 font-semibold text-app-text">
-                        <span className="px-2 py-0.5 rounded bg-zinc-900 border border-app-border text-[11px]">
+                        <span className="px-2 py-0.5 rounded bg-app-bg border border-app-border text-[11px]">
                           {emp.department}
                         </span>
                       </td>

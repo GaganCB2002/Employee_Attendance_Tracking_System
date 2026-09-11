@@ -27,28 +27,28 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex flex-col justify-center items-center p-4 selection:bg-sky-500/30">
+    <div className="min-h-screen bg-app-bg flex flex-col justify-center items-center p-4 selection:bg-blue-500/30 transition-colors duration-200">
       <div className="w-full max-w-md space-y-6">
         {/* Brand & System Status */}
         <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-xl bg-sky-600 flex items-center justify-center mx-auto shadow-xl shadow-sky-600/30">
+          <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center mx-auto shadow-xl shadow-blue-600/30">
             <Shield size={24} className="text-white" />
           </div>
-          <h1 className="text-2xl font-bold font-mono tracking-tight text-zinc-100">
-            AttendX <span className="text-sky-400 font-light">Aero-Ops</span>
+          <h1 className="text-2xl font-bold font-mono tracking-tight text-app-text">
+            AttendX <span className="text-blue-600 font-light">Aero-Ops</span>
           </h1>
-          <p className="text-xs text-zinc-500 font-mono">
+          <p className="text-xs text-app-muted font-mono">
             Photo-Verified Telemetry &amp; Geofenced Attendance Kernel
           </p>
         </div>
 
         {/* Login Box */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
-          <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
-            <span className="text-xs font-mono uppercase tracking-wider text-zinc-400">
+        <div className="bg-app-surface border border-app-border rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
+          <div className="flex items-center justify-between pb-3 border-b border-app-border">
+            <span className="text-xs font-mono uppercase tracking-wider text-app-muted font-semibold">
               Station Authentication
             </span>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-100 border border-emerald-300 text-emerald-700 font-bold">
               POLICY: 3-STRIKE LOCK
             </span>
           </div>
@@ -58,8 +58,8 @@ export default function LoginPage() {
             <div
               className={`p-3.5 rounded-lg border text-xs font-mono flex items-start gap-2.5 ${
                 isLocked
-                  ? 'bg-red-500/15 border-red-500/50 text-red-300'
-                  : 'bg-amber-500/15 border-amber-500/50 text-amber-300'
+                  ? 'bg-red-50 border-red-200 text-red-700'
+                  : 'bg-amber-50 border-amber-200 text-amber-700'
               }`}
             >
               <AlertOctagon size={16} className="shrink-0 mt-0.5" />
@@ -67,7 +67,7 @@ export default function LoginPage() {
                 <div className="font-semibold">{isLocked ? 'ACCOUNT LOCKED' : 'AUTH FAILED'}</div>
                 <div className="text-[11px] mt-0.5">{error}</div>
                 {remainingAttempts !== null && remainingAttempts !== undefined && !isLocked && (
-                  <div className="text-[10px] text-amber-400 font-bold mt-1">
+                  <div className="text-[10px] text-amber-600 font-bold mt-1">
                     Remaining attempts before permanent lock: {remainingAttempts}
                   </div>
                 )}
@@ -77,33 +77,33 @@ export default function LoginPage() {
 
           <form onSubmit={handleLogin} className="space-y-4 font-mono text-xs">
             <div>
-              <label className="block text-zinc-400 mb-1.5 font-medium">
+              <label className="block text-app-text mb-1.5 font-medium">
                 Admin Username or Employee ID
               </label>
               <div className="relative">
-                <User size={15} className="absolute left-3.5 top-3 text-zinc-500" />
+                <User size={15} className="absolute left-3.5 top-3 text-app-muted" />
                 <input
                   type="text"
                   required
                   placeholder="e.g. superadmin or EMP-90000"
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-lg pl-10 pr-3 py-2.5 text-zinc-200 focus:outline-none focus:border-sky-500 text-xs transition-colors"
+                  className="w-full bg-app-bg border border-app-border rounded-lg pl-10 pr-3 py-2.5 text-app-text focus:outline-none focus:border-blue-500 text-xs transition-colors"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-zinc-400 mb-1.5 font-medium">Password</label>
+              <label className="block text-app-text mb-1.5 font-medium">Password</label>
               <div className="relative">
-                <Lock size={15} className="absolute left-3.5 top-3 text-zinc-500" />
+                <Lock size={15} className="absolute left-3.5 top-3 text-app-muted" />
                 <input
                   type="password"
                   required
                   placeholder="••••••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-lg pl-10 pr-3 py-2.5 text-zinc-200 focus:outline-none focus:border-sky-500 text-xs transition-colors"
+                  className="w-full bg-app-bg border border-app-border rounded-lg pl-10 pr-3 py-2.5 text-app-text focus:outline-none focus:border-blue-500 text-xs transition-colors"
                 />
               </div>
             </div>
@@ -111,7 +111,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 px-4 bg-sky-600 hover:bg-sky-500 active:bg-sky-700 text-white font-medium rounded-lg text-xs font-mono flex items-center justify-center gap-2 shadow-lg shadow-sky-600/25 transition-all disabled:opacity-50"
+              className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-medium rounded-lg text-xs font-mono flex items-center justify-center gap-2 shadow-lg shadow-blue-600/25 transition-all disabled:opacity-50"
             >
               {isLoading ? (
                 <div className="flex items-center gap-2">
@@ -128,52 +128,52 @@ export default function LoginPage() {
           </form>
 
           {/* Quick Demo Credentials Switcher */}
-          <div className="pt-4 border-t border-zinc-800 text-[11px] font-mono space-y-2">
-            <span className="text-zinc-500 block uppercase text-[10px]">
+          <div className="pt-4 border-t border-app-border text-[11px] font-mono space-y-2">
+            <span className="text-app-muted block uppercase text-[10px] font-semibold">
               Fast Role Simulator Presets:
             </span>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => setDemoUser('superadmin', 'admin123')}
-                className="text-left p-2 rounded bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 text-zinc-300 transition-colors"
+                className="text-left p-2 rounded-lg bg-app-bg hover:bg-app-surface border border-app-border text-app-text transition-colors shadow-2xs"
               >
-                <div className="font-semibold text-sky-400">Super Admin</div>
-                <div className="text-[10px] text-zinc-500">superadmin / admin123</div>
+                <div className="font-semibold text-blue-600">Super Admin</div>
+                <div className="text-[10px] text-app-muted">superadmin / admin123</div>
               </button>
 
               <button
                 type="button"
                 onClick={() => setDemoUser('engadmin', 'section123')}
-                className="text-left p-2 rounded bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 text-zinc-300 transition-colors"
+                className="text-left p-2 rounded-lg bg-app-bg hover:bg-app-surface border border-app-border text-app-text transition-colors shadow-2xs"
               >
-                <div className="font-semibold text-emerald-400">Section Admin</div>
-                <div className="text-[10px] text-zinc-500">engadmin / section123</div>
+                <div className="font-semibold text-emerald-600">Section Admin</div>
+                <div className="text-[10px] text-app-muted">engadmin / section123</div>
               </button>
 
               <button
                 type="button"
                 onClick={() => setDemoUser('EMP-9000', 'employee123')}
-                className="text-left p-2 rounded bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 text-zinc-300 transition-colors"
+                className="text-left p-2 rounded-lg bg-app-bg hover:bg-app-surface border border-app-border text-app-text transition-colors shadow-2xs"
               >
-                <div className="font-semibold text-zinc-300">Marcus Chen</div>
-                <div className="text-[10px] text-zinc-500">EMP-9000 / employee123</div>
+                <div className="font-semibold text-app-text">Marcus Chen</div>
+                <div className="text-[10px] text-app-muted">EMP-9000 / employee123</div>
               </button>
 
               <button
                 type="button"
                 onClick={() => setDemoUser('EMP-10644', 'employee123')}
-                className="text-left p-2 rounded bg-zinc-950 hover:bg-zinc-800/80 border border-red-500/20 text-zinc-300 transition-colors"
+                className="text-left p-2 rounded-lg bg-app-bg hover:bg-app-surface border border-red-200 text-app-text transition-colors shadow-2xs"
               >
-                <div className="font-semibold text-red-400">Owen Brennan (Locked)</div>
-                <div className="text-[10px] text-zinc-500">EMP-10644 (Test Lockout)</div>
+                <div className="font-semibold text-red-600">Owen Brennan (Locked)</div>
+                <div className="text-[10px] text-app-muted">EMP-10644 (Test Lockout)</div>
               </button>
             </div>
           </div>
         </div>
 
         {/* Security Footer */}
-        <div className="text-center text-[11px] font-mono text-zinc-600">
+        <div className="text-center text-[11px] font-mono text-app-muted">
           Encrypted TLS 1.3 &bull; Back-Button Intercept Active &bull; RTK Geofence Enforced
         </div>
       </div>

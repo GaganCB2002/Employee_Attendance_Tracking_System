@@ -104,11 +104,11 @@ export default function SettingsPage() {
         )}
 
         {/* Tab Selector */}
-        <div className="flex gap-2 p-1.5 bg-zinc-900 border border-app-border rounded-xl text-xs">
+        <div className="flex gap-2 p-1.5 bg-app-bg border border-app-border rounded-xl text-xs">
           <button
             onClick={() => setActiveTab('rules')}
             className={`flex-1 py-2 px-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors ${
-              activeTab === 'rules' ? 'bg-sky-600 text-white shadow-sm' : 'text-zinc-400 hover:text-zinc-200'
+              activeTab === 'rules' ? 'bg-blue-600 text-white shadow-sm' : 'text-app-muted hover:text-app-text'
             }`}
           >
             <Sliders size={15} />
@@ -117,7 +117,7 @@ export default function SettingsPage() {
           <button
             onClick={() => setActiveTab('theme')}
             className={`flex-1 py-2 px-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors ${
-              activeTab === 'theme' ? 'bg-sky-600 text-white shadow-sm' : 'text-zinc-400 hover:text-zinc-200'
+              activeTab === 'theme' ? 'bg-blue-600 text-white shadow-sm' : 'text-app-muted hover:text-app-text'
             }`}
           >
             <Palette size={15} />
@@ -126,7 +126,7 @@ export default function SettingsPage() {
           <button
             onClick={() => setActiveTab('notifications')}
             className={`flex-1 py-2 px-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors ${
-              activeTab === 'notifications' ? 'bg-sky-600 text-white shadow-sm' : 'text-zinc-400 hover:text-zinc-200'
+              activeTab === 'notifications' ? 'bg-blue-600 text-white shadow-sm' : 'text-app-muted hover:text-app-text'
             }`}
           >
             <Bell size={15} />
@@ -294,7 +294,7 @@ export default function SettingsPage() {
             {/* Presets Grid */}
             <div className="space-y-2">
               <label className="block text-xs font-bold text-app-text uppercase">Curated Enterprise Presets</label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5">
                 {Object.keys(THEME_PRESETS).map((pName) => {
                   const pTokens = THEME_PRESETS[pName];
                   const isSelected = preset === pName;
@@ -303,18 +303,18 @@ export default function SettingsPage() {
                       key={pName}
                       type="button"
                       onClick={() => selectPreset(pName)}
-                      className={`p-3 rounded-xl border text-left text-xs transition-all flex flex-col justify-between gap-2 ${
+                      className={`p-3 rounded-xl border text-left text-xs transition-all flex flex-col justify-between gap-2 shadow-xs ${
                         isSelected
-                          ? 'border-sky-500 bg-sky-500/10 shadow-md font-bold text-sky-300'
-                          : 'border-app-border bg-zinc-900/60 hover:bg-zinc-900 text-zinc-400'
+                          ? 'border-blue-600 bg-blue-50 shadow-md font-bold text-blue-700 ring-2 ring-blue-500/20'
+                          : 'border-app-border bg-app-bg hover:bg-app-surface text-app-text'
                       }`}
                     >
                       <div className="flex items-center gap-1.5">
-                        <span className="w-3 h-3 rounded-full" style={{ backgroundColor: pTokens.primary }} />
-                        <span className="w-3 h-3 rounded-full" style={{ backgroundColor: pTokens.accent }} />
-                        <span className="w-3 h-3 rounded-full" style={{ backgroundColor: pTokens.background }} />
+                        <span className="w-3 h-3 rounded-full border border-slate-300" style={{ backgroundColor: pTokens.primary }} />
+                        <span className="w-3 h-3 rounded-full border border-slate-300" style={{ backgroundColor: pTokens.accent }} />
+                        <span className="w-3 h-3 rounded-full border border-slate-300" style={{ backgroundColor: pTokens.background }} />
                       </div>
-                      <span className="text-[11px] truncate">{pName}</span>
+                      <span className="text-[11px] truncate font-semibold">{pName}</span>
                     </button>
                   );
                 })}

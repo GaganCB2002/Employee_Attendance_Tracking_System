@@ -4,19 +4,19 @@
 
 :root {
   --primary-color: #2563eb;
-  --secondary-color: #60a5fa;
-  --accent-color: #38bdf8;
-  --background-color: #0b1329;
-  --surface-color: #152140;
-  --sidebar-color: #090f20;
-  --header-color: #0b1329;
-  --text-color: #f8fafc;
-  --muted-text-color: #94a3b8;
-  --success-color: #10b981;
-  --warning-color: #f59e0b;
-  --danger-color: #ef4444;
-  --info-color: #3b82f6;
-  --border-color: #1e293b;
+  --secondary-color: #3b82f6;
+  --accent-color: #0284c7;
+  --background-color: #f8fafc;
+  --surface-color: #ffffff;
+  --sidebar-color: #ffffff;
+  --header-color: #ffffff;
+  --text-color: #0f172a;
+  --muted-text-color: #64748b;
+  --success-color: #16a34a;
+  --warning-color: #d97706;
+  --danger-color: #dc2626;
+  --info-color: #0284c7;
+  --border-color: #e2e8f0;
 }
 
 @layer base {

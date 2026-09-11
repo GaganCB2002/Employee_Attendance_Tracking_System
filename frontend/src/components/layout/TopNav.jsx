@@ -46,25 +46,25 @@ export default function TopNav({ latencyMs = 42 }) {
   };
 
   return (
-    <header className="border-b border-zinc-800 bg-zinc-950 sticky top-0 z-30 select-none">
+    <header className="border-b border-app-border bg-app-header sticky top-0 z-30 select-none shadow-xs transition-colors duration-200">
       <div className="flex items-center gap-4 px-4 py-2.5 overflow-x-auto">
         {/* Brand */}
         <div
           onClick={() => navigate('/ops')}
           className="flex items-center gap-2 shrink-0 cursor-pointer group"
         >
-          <div className="w-7 h-7 rounded bg-sky-600 flex items-center justify-center shadow-lg shadow-sky-600/20 group-hover:bg-sky-500 transition-colors">
+          <div className="w-7 h-7 rounded bg-blue-600 flex items-center justify-center shadow-md shadow-blue-600/20 group-hover:bg-blue-500 transition-colors">
             <Shield size={15} className="text-white" />
           </div>
-          <span className="text-zinc-100 font-semibold text-sm tracking-tight font-mono">
-            AttendX <span className="text-sky-400 font-normal">Ops</span>
+          <span className="text-app-text font-bold text-sm tracking-tight font-mono">
+            AttendX <span className="text-blue-600 font-normal">Ops</span>
           </span>
         </div>
 
-        <div className="h-5 w-px bg-zinc-800 shrink-0" />
+        <div className="h-5 w-px bg-app-border shrink-0" />
 
         {/* Ops Navigation Links */}
-        <nav className="flex items-center gap-2 sm:gap-4 text-xs font-mono text-zinc-500 shrink-0">
+        <nav className="flex items-center gap-2 sm:gap-4 text-xs font-mono text-app-muted shrink-0">
           {NAV_ITEMS.map((item) => {
             const isActive = location.pathname === item.path;
             const Icon = item.icon;
@@ -72,13 +72,13 @@ export default function TopNav({ latencyMs = 42 }) {
               <button
                 key={item.label}
                 onClick={() => navigate(item.path)}
-                className={`flex items-center gap-1.5 px-2 py-1 transition-colors ${
+                className={`flex items-center gap-1.5 px-2 py-1 transition-colors font-medium ${
                   isActive
-                    ? 'text-zinc-100 border-b-2 border-sky-500 font-medium'
-                    : 'hover:text-zinc-300'
+                    ? 'text-blue-600 border-b-2 border-blue-600 font-bold'
+                    : 'hover:text-app-text'
                 }`}
               >
-                <Icon size={13} className={isActive ? 'text-sky-400' : ''} />
+                <Icon size={13} className={isActive ? 'text-blue-600' : ''} />
                 {item.label}
               </button>
             );
@@ -88,12 +88,12 @@ export default function TopNav({ latencyMs = 42 }) {
         {/* Right Telemetry Indicators */}
         <div className="ml-auto flex items-center gap-2 shrink-0">
           {/* Socket latency */}
-          <div className="flex items-center gap-1.5 text-[11px] font-mono text-emerald-400 border border-emerald-500/30 bg-emerald-500/10 rounded px-2 py-1">
+          <div className="flex items-center gap-1.5 text-[11px] font-mono text-emerald-600 border border-emerald-500/30 bg-emerald-500/10 rounded px-2 py-1 font-semibold">
             <Wifi size={12} className="animate-pulse" /> {latencyMs}ms
           </div>
 
           {/* Zulu Clock */}
-          <div className="hidden sm:flex items-center gap-1.5 text-[11px] font-mono text-zinc-400 border border-zinc-800 rounded px-2 py-1 bg-zinc-900/50">
+          <div className="hidden sm:flex items-center gap-1.5 text-[11px] font-mono text-app-muted border border-app-border rounded px-2 py-1 bg-app-surface">
             <Clock size={12} /> {zulu(now)}Z
           </div>
 
@@ -101,27 +101,27 @@ export default function TopNav({ latencyMs = 42 }) {
           <div className="relative">
             <button
               onClick={() => setShowMenu(!showMenu)}
-              className="flex items-center gap-1.5 text-[11px] font-mono text-zinc-300 border border-zinc-800 rounded px-2 py-1 hover:bg-zinc-900 transition-colors"
+              className="flex items-center gap-1.5 text-[11px] font-mono text-app-text border border-app-border rounded px-2 py-1 hover:bg-app-surface transition-colors font-semibold"
             >
-              <User size={12} className="text-sky-400" />
+              <User size={12} className="text-blue-600" />
               <span className="max-w-[120px] truncate">
                 {user?.name || (isSuperAdmin ? 'Super Admin' : 'Admin')}
               </span>
-              <ChevronDown size={12} className="text-zinc-500" />
+              <ChevronDown size={12} className="text-app-muted" />
             </button>
 
             {showMenu && (
-              <div className="absolute right-0 mt-1 w-52 bg-zinc-900 border border-zinc-800 rounded shadow-xl py-1 z-50 text-xs font-mono">
-                <div className="px-3 py-2 border-b border-zinc-800 text-[11px] text-zinc-400">
-                  <div className="text-zinc-200 font-semibold">{user?.name}</div>
-                  <div className="text-zinc-500">{user?.role}</div>
+              <div className="absolute right-0 mt-1 w-52 bg-app-surface border border-app-border rounded-xl shadow-xl py-1 z-50 text-xs font-mono">
+                <div className="px-3 py-2 border-b border-app-border text-[11px] text-app-muted">
+                  <div className="text-app-text font-bold">{user?.name}</div>
+                  <div className="text-app-muted">{user?.role}</div>
                   {user?.section && (
-                    <div className="text-sky-400 text-[10px] mt-0.5">{user.section.name}</div>
+                    <div className="text-blue-600 text-[10px] mt-0.5">{user.section.name}</div>
                   )}
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-3 py-2 flex items-center gap-2 text-red-400 hover:bg-zinc-800/80 transition-colors"
+                  className="w-full text-left px-3 py-2 flex items-center gap-2 text-red-600 hover:bg-red-50 transition-colors"
                 >
                   <LogOut size={13} /> Disconnect Session
                 </button>

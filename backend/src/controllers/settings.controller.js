@@ -79,22 +79,22 @@ const SettingsController = {
       });
 
       const theme = setting?.value || {
-        mode: 'dark',
-        preset: 'Professional Blue',
+        mode: 'light',
+        preset: 'Light Enterprise',
         primary: '#2563eb',
-        secondary: '#60a5fa',
-        accent: '#38bdf8',
-        background: '#0b1329',
-        surface: '#152140',
-        sidebar: '#090f20',
-        header: '#0b1329',
-        text: '#f8fafc',
-        mutedText: '#94a3b8',
-        success: '#10b981',
-        warning: '#f59e0b',
-        danger: '#ef4444',
-        info: '#3b82f6',
-        border: '#1e293b',
+        secondary: '#3b82f6',
+        accent: '#0284c7',
+        background: '#f8fafc',
+        surface: '#ffffff',
+        sidebar: '#ffffff',
+        header: '#ffffff',
+        text: '#0f172a',
+        mutedText: '#64748b',
+        success: '#16a34a',
+        warning: '#d97706',
+        danger: '#dc2626',
+        info: '#0284c7',
+        border: '#e2e8f0',
       };
 
       return res.json({ success: true, theme });
